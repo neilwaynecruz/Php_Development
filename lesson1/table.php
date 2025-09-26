@@ -132,7 +132,7 @@
 
         // Display products
         if (!empty($_SESSION['products'])) {
-            echo "<h2>Product List</h2>";
+            echo "<h2>Table Result</h2>";
             echo "<table>";
             echo "<tr><th>Product Code</th><th>Description</th><th>Price</th></tr>";
             foreach ($_SESSION['products'] as $product) {

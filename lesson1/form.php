@@ -82,7 +82,7 @@
 </head>
 <body>
     <h1>Product Entry (Form)</h1>
-    <form method="post" autocomplete="off">
+    <form method="post">
         <label for="code">Product Code:</label>
         <input type="text" id="code" name="code" required>
 
