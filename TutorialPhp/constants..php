@@ -9,7 +9,20 @@
     <?php
     
     define("GREETING", "Welcome to W3Schools.com!");
-    echo GREETING;
+    echo GREETING . "<br>";
+
+    // another way to define constant usding "const" keyword
+    const MY_NAME = "Neil Wayne Cruz";
+    echo MY_NAME . "<br>";
+
+    //magic constant
+    
+    echo "Line number: " . __LINE__ . "<br>";
+    echo __CLASS__ ."<br>";
+    echo "File name: " . __FILE__ . "<br>";  
+    echo "function name: " . __FUNCTION__ . "<br>";
+    
+
 
     ?>
     
