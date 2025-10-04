@@ -47,6 +47,25 @@
             if($e === 50) continue;
             echo "The value of e is: {$e} <br>";
         endfor;
+
+        echo "<br>";
+        // foreach loop - loops through a block of code for each element in an array
+
+        $fruits = array("apple","mango","grapes","banana");
+        echo "<b>fruits:</b> ";
+        foreach($fruits as $f){
+            if ($f === "grapes") continue;
+            echo "<span style='color:red;'>{$f}, </span>";
+        }
+
+        //or
+
+        $foods = ["rice","chicken","fish","vegetables"];
+        echo "<br><b>foods:</b> ";
+        foreach($foods as $f):
+            if ($f === "fish") continue;
+            echo "<span style='color: blue;'>{$f}, </span>";
+        endforeach;
         
     ?>
 </body>
