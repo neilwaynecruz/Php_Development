@@ -27,11 +27,14 @@
             border-bottom: 2px solid #d4af37;
             display: inline-block;
             margin-bottom: 10px;
+<<<<<<< HEAD
             transition: all 0.3s ease-in-out;
         }
 
         h3:hover{
             transform: scale(1.2);
+=======
+>>>>>>> f543127652f5363bf602258eefa81cf24da7889d
         }
 
         .container {
@@ -52,32 +55,52 @@
 
         li {
             margin-bottom: 3px;
+<<<<<<< HEAD
             transition: all 0.15s ease-in-out;
         }
 
         li:hover{
             color: #bf0404ff;
             transform: scale3d(1.03, 1.03, 1);
+=======
+>>>>>>> f543127652f5363bf602258eefa81cf24da7889d
         }
 
         .section {
             margin-bottom: 30px;
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f543127652f5363bf602258eefa81cf24da7889d
         .sched-box {
             background-color: #fff9e6;
             border: 1px solid #d4af37;
             padding: 12px 18px;
             border-radius: 6px;
             margin-bottom: 12px;
+<<<<<<< HEAD
             line-height: 1.8;
             transition: all 0.2s ease-in-out;
         }
         .sched-box:hover{
             transform: scale(1.03);            
+=======
+            transition: all 0.2s ease-in-out;
+        }
+
+        .sched-box:hover{
+            transform: scale(1.03);             /* gently enlarges the box */
+>>>>>>> f543127652f5363bf602258eefa81cf24da7889d
             background-color: #ffffffff;
             color: rgba(7, 66, 192, 1);
             box-shadow: 0 3px 3px 1px rgba(0, 0, 0, 0.1);
         }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> f543127652f5363bf602258eefa81cf24da7889d
         .sched-box b {
             color: #800000;
         }
