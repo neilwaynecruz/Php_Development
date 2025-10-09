@@ -16,10 +16,12 @@
 
         h1 {
             text-align: center;
-            background-color: #800000;
+            background: linear-gradient(70deg, #800000, #a52a2a, #800000);
             color: #fff;
-            padding: 15px 0;
+            padding: 25px 0;
+            margin-top: 0;
             margin-bottom: 30px;
+            letter-spacing: 1px;
         }
 
         h3 {
