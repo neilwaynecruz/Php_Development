@@ -27,14 +27,11 @@
             border-bottom: 2px solid #d4af37;
             display: inline-block;
             margin-bottom: 10px;
-<<<<<<< HEAD
             transition: all 0.3s ease-in-out;
         }
 
-        h3:hover{
+        h3:hover {
             transform: scale(1.2);
-=======
->>>>>>> f543127652f5363bf602258eefa81cf24da7889d
         }
 
         .container {
@@ -55,52 +52,35 @@
 
         li {
             margin-bottom: 3px;
-<<<<<<< HEAD
             transition: all 0.15s ease-in-out;
         }
 
-        li:hover{
+        li:hover {
             color: #bf0404ff;
             transform: scale3d(1.03, 1.03, 1);
-=======
->>>>>>> f543127652f5363bf602258eefa81cf24da7889d
         }
 
         .section {
             margin-bottom: 30px;
         }
-<<<<<<< HEAD
-=======
 
->>>>>>> f543127652f5363bf602258eefa81cf24da7889d
         .sched-box {
             background-color: #fff9e6;
             border: 1px solid #d4af37;
             padding: 12px 18px;
             border-radius: 6px;
             margin-bottom: 12px;
-<<<<<<< HEAD
             line-height: 1.8;
             transition: all 0.2s ease-in-out;
         }
-        .sched-box:hover{
-            transform: scale(1.03);            
-=======
-            transition: all 0.2s ease-in-out;
-        }
 
-        .sched-box:hover{
-            transform: scale(1.03);             /* gently enlarges the box */
->>>>>>> f543127652f5363bf602258eefa81cf24da7889d
+        .sched-box:hover {
+            transform: scale(1.03);
             background-color: #ffffffff;
             color: rgba(7, 66, 192, 1);
             box-shadow: 0 3px 3px 1px rgba(0, 0, 0, 0.1);
         }
-<<<<<<< HEAD
-=======
 
-
->>>>>>> f543127652f5363bf602258eefa81cf24da7889d
         .sched-box b {
             color: #800000;
         }
@@ -160,64 +140,58 @@
         );
 
         $classSched = array(
-                [
-                    "subject_code" => "COMP 015",
-                    "description" => "Fundamentals of Research",
-                    "day/time" => "Sunday 07:30AM - 10:30AM"
-                ],
-
-                [
-                    "subject_code" => "COMP 016",
-                    "description" => "Web Development",
-                    "day/time" => "Saturday 07:30AM - 12:30PM"
-                ],
-
-                [
-                    "subject_code" => "COMP 017",
-                    "description" => "Multimedia",
-                    "day/time" => "Monday/Thursday 06:00PM - 09:00PM / 06:00PM - 08:00PM"
-                ],
-
-                [
-                    "subject_code" => "COMP 018",
-                    "description" => "Database Administration",
-                    "day/time" => "Saturday/Sunday 01:00PM - 03:00PM / 03:00PM - 06:00PM"
-                ],
-
-                [
-                    "subject_code" => "ELEC IT-E1",
-                    "description" => "IT Elective 1",
-                    "day/time" => "Sunday 11:00AM - 04:00PM"
-                ],
-
-                [
-                    "subject_code" => "GEED 006",
-                    "description" => "Art Appreciation / Pagpapahalaga sa Sining",
-                    "day/time" => "Friday 06:00PM - 09:00PM"
-                ],
-
-                [
-                    "subject_code" => "INTE 301",
-                    "description" => "Systems Integration and Architecture 1",
-                    "day/time" => "Wednesday 06:00PM - 09:00PM"
-                ],
+            [
+                "subject_code" => "COMP 015",
+                "description" => "Fundamentals of Research",
+                "day/time" => "Sunday 07:30AM - 10:30AM"
+            ],
+            [
+                "subject_code" => "COMP 016",
+                "description" => "Web Development",
+                "day/time" => "Saturday 07:30AM - 12:30PM"
+            ],
+            [
+                "subject_code" => "COMP 017",
+                "description" => "Multimedia",
+                "day/time" => "Monday/Thursday 06:00PM - 09:00PM / 06:00PM - 08:00PM"
+            ],
+            [
+                "subject_code" => "COMP 018",
+                "description" => "Database Administration",
+                "day/time" => "Saturday/Sunday 01:00PM - 03:00PM / 03:00PM - 06:00PM"
+            ],
+            [
+                "subject_code" => "ELEC IT-E1",
+                "description" => "IT Elective 1",
+                "day/time" => "Sunday 11:00AM - 04:00PM"
+            ],
+            [
+                "subject_code" => "GEED 006",
+                "description" => "Art Appreciation / Pagpapahalaga sa Sining",
+                "day/time" => "Friday 06:00PM - 09:00PM"
+            ],
+            [
+                "subject_code" => "INTE 301",
+                "description" => "Systems Integration and Architecture 1",
+                "day/time" => "Wednesday 06:00PM - 09:00PM"
+            ],
         );
 
         // Subject List
         echo "<div class='section'>";
         echo "<h3>📚 List of Subjects</h3>";
         echo "<ul>";
-        foreach($listOfSubject as $subs){
+        foreach ($listOfSubject as $subs) {
             echo "<li>{$subs}</li>";
         }
         echo "</ul></div>";
 
         // Student List
         echo "<div class='section'>";
-        foreach($listOfStudents as $gender => $students){
-            echo $gender === "Male"? "<h3>👨‍🎓 {$gender} Students</h3>":"<h3>👩‍🎓 {$gender} Students</h3>";
+        foreach ($listOfStudents as $gender => $students) {
+            echo $gender === "Male" ? "<h3>👨‍🎓 {$gender} Students</h3>" : "<h3>👩‍🎓 {$gender} Students</h3>";
             echo "<ol>";
-            foreach($students as $student){
+            foreach ($students as $student) {
                 echo "<li>{$student}</li>";
             }
             echo "</ol>";
@@ -227,9 +201,9 @@
         // Class Schedule
         echo "<div class='section'>";
         echo "<h3>📅 Class Schedule</h3>";
-        foreach($classSched as $schedList){
+        foreach ($classSched as $schedList) {
             echo "<div class='sched-box'>";
-            foreach($schedList as $sched => $list){
+            foreach ($schedList as $sched => $list) {
                 echo "<b>" . ucfirst($sched) . ":</b> {$list}<br>";
             }
             echo "</div>";
