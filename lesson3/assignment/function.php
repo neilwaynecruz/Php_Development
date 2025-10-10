@@ -101,7 +101,7 @@
 <body>
 
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
-        <h2 style="text-align:center; color:#800000;">PUP Payroll Calculator</h2>
+        <h2 style="text-align:center; color:#800000;">Net Pay Calculator</h2>
         <label for="base-pay">Base Pay:</label>
         <input type="number" name="base-pay" id="base-pay" required step="0.1" min="0">
 
