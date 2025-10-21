@@ -1,3 +1,8 @@
+<?php
+    ob_start();
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,40 +11,144 @@
     <title>Database</title>
 
     <style>
-        body{
-            font-family: Arial, Helvetica, sans-serif;
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 17px;
+            background-color: #f4f5f7;
+            color: #333;
+            margin: 0;
+            padding: 40px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        form {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 35px 40px;
+            width: 100%;
+            max-width: 520px;
+            margin: 40px auto;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            animation: fadeIn 0.4s ease-in-out;
+            padding-right: 63px;
+        }
+
+        label {
+            font-size: 15px;
+            color: #555;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            margin-top: 14px;
+        }
+
+        input[type="text"] {
+            display: block;
+            width: 100%;
+            padding: 11px 13px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 2px;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 6px rgba(74,144,226,0.3);
+            outline: none;
+        }
+
+        input[type="text"]::placeholder {
+            text-align: left;
+            color: #888;
+        }
+
+        input[type="submit"] {
+            background-color: #4a90e2;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 18px;
+            transition: background 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            margin-left: 13px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #357ABD;
+            transform: translateY(-1px);
+        }
+
+        input[name="reset"] {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        input[name="reset"]:hover {
+            background-color: #ccc;
+        }
+
+        
+        table {
+            margin: 40px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        th {
+            background-color: #4a90e2;
+            color: #fff;
+            padding: 14px 10px;
             font-size: 16px;
         }
 
-        table{
-            margin: 40px auto;
-            border-collapse: collapse;
-            width: 50%;
+        td {
+            border-bottom: 1px solid #eee;
+            padding: 12px 10px;
+            font-size: 15px;
+            text-align: center;
         }
+
+        tr:nth-child(even) {
+            background-color: #f9fafc;
+        }
+
+        tr:hover {
+            background-color: #eef4ff;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 17px;
+        }
+
+        .message {
+            text-align: center;
+            font-weight: 600;
+            margin: 15px auto;
+            width: 100%;
+            max-width: 520px;
+        }
+
         
-        th, td{
-            border: 1px solid black;
-            padding: 5px 5px;
-            text-align: center;
-        }
-
-        form{
-            margin-top: 5%;
-            text-align: center;
-        }
-
-        input[type="text"], input[type="submit"]{
-            margin: 5px auto;
-            width: 20%;
-            padding: 5px 5px;
-        }
-        input[type="text"]::placeholder{
-            text-align: center;
-        }
-
-        p{
-            margin-top: 5px;
-            margin-bottom: 5px;
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(8px);}
+            to {opacity: 1; transform: translateY(0);}
         }
     </style>
 </head>
@@ -47,24 +156,22 @@
 
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
         <label for="lName">Last Name: </label>
-        <input type="text" name="lName" placeholder="Ex: Cruz" required><br><br>
+        <input type="text" name="lName" placeholder="Ex: Cruz" required>
 
         <label for="fName">First Name: </label>
-        <input type="text" name="fName" placeholder="Ex: Neil Wayne" required><br><br>
+        <input type="text" name="fName" placeholder="Ex: Neil Wayne" required>
 
         <label for="mName">Middle Name: </label>
-        <input type="text" name="mName" placeholder="Ex: Tubillara"><br><br>
-        
+        <input type="text" name="mName" placeholder="Ex: Tubillara">
+
         <label for="course-section">Course Section: </label>
-        <input type="text" name="course-section" placeholder="Ex: BSIT 3-2" required><br><br>
+        <input type="text" name="course-section" placeholder="Ex: BSIT 3-2" required>
 
         <input type="submit" name="submit" value="Submit">
-        <input type="submit" name="reset" value="Reset"> <br><br>
+        <input type="submit" name="reset" value="Reset">
     </form>
 
     <?php
-    ob_start();
-    session_start();
 
     $dbConnection = mysqli_connect("localhost", "root", "", "dbstudents");
 
@@ -124,7 +231,7 @@
             echo '
                 <tr>
                     <td>' . $sID .'</td>
-                    <td>' . $fn . " " . $mn . " " . $ls .'</td>
+                    <td>' . $fn . ' ' . $mn . ' ' . $ls .'</td>
                     <td>' . $cs . '</td>
                 </tr>';
         }
@@ -132,7 +239,6 @@
         echo '</table>';
     }
     ob_end_flush();
-
     ?>
 </body>
 </html>
