@@ -1,0 +1,129 @@
+/* PUP INSPIRED */
+
+:root {
+  --pup-maroon: #800000;
+  --pup-gold: #d4af37;
+
+  --bs-primary: var(--pup-maroon);
+  --bs-secondary: #b07d33;
+  --bs-warning: var(--pup-gold);
+  --bs-info: #a06f2b;
+  --bs-link-color: var(--pup-maroon);
+  --bs-body-font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background: radial-gradient(
+      60rem 60rem at 120% -10%,
+      rgba(212, 175, 55, 0.08),
+      transparent 40%
+    ),
+    radial-gradient(
+      50rem 50rem at -10% 120%,
+      rgba(212, 175, 55, 0.06),
+      transparent 40%
+    ),
+    linear-gradient(180deg, #fff, #fff);
+}
+
+.navbar {
+  background: linear-gradient(90deg, var(--pup-maroon), #5f0000);
+}
+
+.navbar-brand {
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.card {
+  border: 1px solid rgba(128, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.card .card-title {
+  font-weight: 700;
+  color: var(--pup-maroon);
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, var(--pup-maroon), #5f0000);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #a31919, #7a0000);
+}
+
+.btn-outline-danger {
+  border-width: 2px;
+}
+
+.badge-gold {
+  background-color: var(--pup-gold);
+  color: #3b2a00;
+}
+
+.table-hover tbody tr:hover {
+  --bs-table-color: #2c2c2c;
+  --bs-table-bg: rgba(212, 175, 55, 0.08);
+}
+
+.table thead th {
+  color: var(--pup-maroon);
+  border-bottom: 2px solid rgba(212, 175, 55, 0.6);
+}
+
+.alert {
+  border-left: 6px solid var(--pup-maroon);
+  border-radius: 10px;
+}
+
+.hero {
+  background: linear-gradient(
+      135deg,
+      rgba(128, 0, 0, 0.92),
+      rgba(128, 0, 0, 0.8)
+    ),
+    url("") center/cover no-repeat;
+  color: #fff;
+  border-radius: 14px;
+  padding: 28px 24px;
+  box-shadow: 0 12px 20px rgba(128, 0, 0, 0.25);
+}
+
+.stat-card {
+  border-top: 6px solid var(--pup-gold);
+}
+
+.kicker {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+}
+
+.brand-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--pup-gold);
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* Print styles */
+@media print {
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  .card,
+  .hero {
+    box-shadow: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+}
