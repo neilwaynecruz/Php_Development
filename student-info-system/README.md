@@ -135,30 +135,32 @@ Below are sample pages of the **Iskolar Student Information System**.
 
 ### 🖥️ Login Page (`login.php`)
 
-![Login Page](assets/screenshots/login.png)
+![Login Page](assets/ScreenShots/login.png)
 
 ### 🧾 Register Page (`register.php`)
 
-![Register Page](assets/screenshots/register.png)
+![Register Page](assets/ScreenShots/register.png)
 
 ### 🎓 Student Dashboard (`students.php`)
 
-![Student Dashboard](assets/screenshots/students.png)
+![Student Dashboard](assets/ScreenShots/students.png)
 
 ### 🔑 Account Settings (`account.php`)
 
-![Account Page](assets/screenshots/account.png)
+![Account Page](assets/ScreenShots/account.png)
 
 ### 🚪 Logout (`logout.php`)
 
-![Logout Page](assets/screenshots/logout.png)
+![Logout Page](assets/ScreenShots/logout.png)
 
 ### 🗄️ Database Setup (`setup.sql`)
 
-![Database Setup](assets/screenshots/database.png)
+![Database Setup](assets/ScreenShots/database.png)
 
 > 📝 **Note:**  
 > The `setup.sql` file should be imported in **phpMyAdmin** to create the `iskolar_sis_db` database and default admin account.
+
+---
 
 ### 🎯 Summary
 
