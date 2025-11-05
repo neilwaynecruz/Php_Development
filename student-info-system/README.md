@@ -132,6 +132,14 @@
 ## 📸 (Optional) Screenshots
 
 _Add screenshots of your Login page, Dashboard, or Student Table here to make your README visually appealing._
+**login.php:**: ![alt text](assets/ScreenShots/login.png)
+**register.php**: ![alt text](assets/ScreenShots/register.png)
+**students.php**: ![alt text](assets/ScreenShots/students.png)
+**account.php**: ![alt text](assets/ScreenShots/account.png)
+**logout.php**: ![alt text](assets/ScreenShots/logout.png)
+**setup.sql**: ![alt text](assets/ScreenShots/database.png)
+
+> 📝 \_Note: that setup.sql is the one you will import in you phpAdmin
 
 ---
 
@@ -141,6 +149,6 @@ This project demonstrates a fully functional **Student Information System** usin
 
 ---
 
-**Developed by:** Neil Wayne Cruz  
+**Developed by:** Neil Wayne Cruz, Charlie Magne Rola, Charles Gabriel Rola, Christian Colita ,Jenero Santos
 🖥️ _Information Technology Student_  
 📘 _For educational and presentation use only._
