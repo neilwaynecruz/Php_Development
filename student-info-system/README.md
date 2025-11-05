@@ -1,10 +1,28 @@
+# 🎓 Iskolar Student Information System (PHP/MySQL + Bootstrap 5)
+
+A simple, presentation-ready **Student Information System** built using:
+
+- PHP (procedural, MySQLi)
+- Session-based authentication
+- Validation & sanitization functions
+- Bootstrap 5 UI with a **PUP-inspired** maroon/gold theme
+- Full CRUD for student records
+
+![PHP](https://img.shields.io/badge/PHP-7.4+-blue)
+![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3)
+
+**Database:** `iskolar_sis_db`
+
 ---
+
 ## ⚙️ Requirements
 
 - PHP 7.4+ or PHP 8.x
 - MySQL 5.7+ / 8.x
 - Apache (XAMPP/WAMP/LAMP)
 - Internet access for Bootstrap & Google Fonts CDN (or host locally)
+
 ---
 
 ## 🧩 Setup Instructions
@@ -67,6 +85,29 @@
 ### Logout (`logout.php`)
 
 - Ends session and redirects to login
+
+---
+
+## 📁 Folder Structure
+
+student-info-system/
+├─ assets/
+│ ├─ css/
+│ │ └─ theme.css
+│ └─ ScreenShots/
+│ ├─ account.png
+│ ├─ database.png
+│ ├─ login.png
+│ ├─ logout.png
+│ ├─ register.png
+│ └─ students.png
+├─ account.php
+├─ login.php
+├─ logout.php
+├─ register.php
+├─ setup.sql
+├─ students.php
+└─ README.md
 
 ---
 
@@ -168,6 +209,7 @@ This project demonstrates a fully functional **Student Information System** usin
 
 ---
 
-**Developed by:** Neil Wayne Cruz, Charlie Magne Rola, Charles Gabriel Rola, Christian Colita ,Jenero Santos
-🖥️ _Information Technology Student_  
+**Developed by:**  
+Neil Wayne Cruz, Charlie Magne Rola, Charles Gabriel Rola, Christian Colita, Jenero Santos  
+🖥️ _Information Technology Students_  
 📘 _For educational and presentation use only._
