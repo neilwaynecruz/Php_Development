@@ -129,19 +129,36 @@
 
 ---
 
-## 📸 (Optional) Screenshots
+## 📸 Screenshots
 
-_Add screenshots of your Login page, Dashboard, or Student Table here to make your README visually appealing._
-**login.php:**: ![alt text](assets/ScreenShots/login.png)
-**register.php**: ![alt text](assets/ScreenShots/register.png)
-**students.php**: ![alt text](assets/ScreenShots/students.png)
-**account.php**: ![alt text](assets/ScreenShots/account.png)
-**logout.php**: ![alt text](assets/ScreenShots/logout.png)
-**setup.sql**: ![alt text](assets/ScreenShots/database.png)
+Below are sample pages of the **Iskolar Student Information System**.
 
-> 📝 \_Note: that setup.sql is the one you will import in you phpAdmin
+### 🖥️ Login Page (`login.php`)
 
----
+![Login Page](assets/screenshots/login.png)
+
+### 🧾 Register Page (`register.php`)
+
+![Register Page](assets/screenshots/register.png)
+
+### 🎓 Student Dashboard (`students.php`)
+
+![Student Dashboard](assets/screenshots/students.png)
+
+### 🔑 Account Settings (`account.php`)
+
+![Account Page](assets/screenshots/account.png)
+
+### 🚪 Logout (`logout.php`)
+
+![Logout Page](assets/screenshots/logout.png)
+
+### 🗄️ Database Setup (`setup.sql`)
+
+![Database Setup](assets/screenshots/database.png)
+
+> 📝 **Note:**  
+> The `setup.sql` file should be imported in **phpMyAdmin** to create the `iskolar_sis_db` database and default admin account.
 
 ### 🎯 Summary
 
