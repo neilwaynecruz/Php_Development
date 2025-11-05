@@ -1,213 +1,146 @@
-# Iskolar Student Information System (PHP/MySQL + Bootstrap 5)
-
-A simple, presentation-ready Student Information System built in your coding style:
-
-- PHP (procedural, mysqli)
-- Sessions for Login/Logout and flash messages
-- Validation functions for input checks
-- Bootstrap 5 UI with a PUP-inspired theme
-- CRUD for student records
-
-Database name: `iskolar_sis_db`
-
 ---
+## ⚙️ Requirements
 
-## Features
-
-- Authentication
-  - Register new account (register.php)
-  - Login/Logout via PHP sessions (login.php / logout.php)
-  - Change Password (account.php) — supports both plain and hashed passwords; after change, password is hashed
-- Students CRUD (students.php)
-  - Create: Add new student
-  - Read: List all students in a table
-  - Update: Search by ID → edit and update record
-  - Delete: Delete a record from the list
-  - Reset All: Truncate table and reset IDs
-- Validation functions and sanitization
-  - sanitize(), validateLogin(), validateRegister(), validateStudent(), validateChange()
-- UI/UX
-  - Bootstrap 5 components
-  - PUP-inspired theme (maroon/gold) via `assets/css/theme.css`
-  - Responsive layout
-
----
-
-## Folder Structure
-
-student-info-system/
-├─ login.php
-├─ register.php
-├─ students.php
-├─ account.php
-├─ logout.php
-├─ setup.sql
-├─ README.md
-└─ assets/
-└─ css/
-└─ theme.css
-
----
-
-## Requirements
-
-- PHP 7.4+ (or PHP 8.x)
+- PHP 7.4+ or PHP 8.x
 - MySQL 5.7+ / 8.x
 - Apache (XAMPP/WAMP/LAMP)
 - Internet access for Bootstrap & Google Fonts CDN (or host locally)
+---
+
+## 🧩 Setup Instructions
+
+1. **Move the folder** to your web root:
+
+   - XAMPP → `htdocs/student-info-system`
+   - WAMP → `www/student-info-system`
+
+2. **Create the database and tables**
+
+   - Import `setup.sql` via phpMyAdmin
+   - or run it manually to create:
+     - Database: `iskolar_sis_db`
+     - Tables: `studentinfo`, `users`
+     - Default admin user: `admin / admin123`
+
+3. **Theme (PUP-inspired)**
+
+   - Ensure this file exists and is linked:
+     ```html
+     <link href="assets/css/theme.css" rel="stylesheet" />
+     ```
+
+4. **Start services**
+
+   - Start Apache and MySQL in XAMPP/WAMP/LAMP
+
+5. **Open the app**
+   - Visit: [http://localhost/student-info-system/login.php](http://localhost/student-info-system/login.php)
+   - Login using:
+     - **Username:** admin
+     - **Password:** admin123
+   - Or click “Create an account” to register a new user
 
 ---
 
-## Setup
+## 💻 Usage Guide
 
-1. Move the folder to your web root
+### Login (`login.php`)
 
-- XAMPP: htdocs/student-info-system
-- WAMP: www/student-info-system
+- Enter username and password
+- On success → redirected to `students.php`
 
-2. Create the database and tables
+### Register (`register.php`)
 
-- Import `setup.sql` via phpMyAdmin, or run:
+- Create a new account (passwords saved using `password_hash()`)
 
-This creates:
+### Dashboard (`students.php`)
 
-- Database: `iskolar_sis_db`
-- Tables: `studentinfo`, `users`
-- Default admin user (if not present): `admin / admin123`
+- Create, read, update, and delete student records
+- Search by ID → edit form appears
+- “Reset All” → truncates the table and resets IDs
 
-3. Theme (PUP-inspired)
+### Account (`account.php`)
 
-- Ensure this file exists and is linked:
-- `assets/css/theme.css` (PUP maroon/gold theme)
-- All pages link it via:
-<link href="assets/css/theme.css" rel="stylesheet"> ```
+- Change password (current → new → confirm)
+- Works for both plain and hashed existing passwords; new passwords always hashed
 
-4. Start services
-   Start Apache and MySQL in XAMPP/WAMP/LAMP
+### Logout (`logout.php`)
 
-5. Open the app
+- Ends session and redirects to login
 
-- Go to: http://localhost/student-info-system/login.php
-- Login using: admin / admin123
-- Or click “Create an account” to register a new user
+---
 
-## Usage
+## 📄 File Overview
 
-- Login (login.php)
+| File                     | Description                                            |
+| ------------------------ | ------------------------------------------------------ |
+| **setup.sql**            | Creates database, tables, and seeds default admin user |
+| **login.php**            | Handles session-based login with validation            |
+| **register.php**         | Registers new users using `password_hash()`            |
+| **account.php**          | Allows password changes with verification              |
+| **students.php**         | CRUD operations for `studentinfo` table                |
+| **logout.php**           | Ends session and redirects to login                    |
+| **assets/css/theme.css** | PUP-inspired maroon/gold theme for Bootstrap UI        |
 
-  - Enter username and password
-  - On success, you’re redirected to students.php
+---
 
-- Register (register.php)
+## 🔒 Validation & Security
 
-  - Create a new account (passwords are saved using password_hash())
+- **Sanitization:**  
+  `sanitize()` wraps `trim()` + `htmlspecialchars()`
 
-- Dashboard (students.php)
+- **Validation:**  
+  Functions: `validateLogin()`, `validateRegister()`, `validateStudent()`, `validateChange()`
 
-  - Create new student
-  - View table of all students
-  - Update: Use “Search Student (by ID)” → edit form appears
-  - Delete: Use “Delete” button on a row
-  - Reset All: Truncate the table and reset IDs
-
-- Account (account.php)
-
-  - Change your password (current, new, confirm)
-  - Works for both plain and hashed existing passwords; new password is always hashed
-
-- Logout (logout.php)
-  - Ends the session and returns to login
-
-## File Overview
-
-- setup.sql
-
-  - Creates iskolar_sis_db, studentinfo, and users tables
-  - Seeds admin user (INSERT IGNORE)
-
-- login.php
-
-  - Session-based login
-  - Validates input (validateLogin)
-  - Supports both hashed and plain password checks
-
-- register.php
-
-  - Create new user with password_hash()
-  - Validates input (validateRegister)
-
-- account.php
-
-  - Change password (validateChange)
-  - Verifies current password (plain or hashed), stores new as hashed
-
-- students.php
-
-  - Protected by session
-  - CRUD for studentinfo table
-  - Update via search-by-ID edit form
-  - Reset (TRUNCATE) table
-  - Validation (validateStudent), sanitization (sanitize)
-
-- logout.php
-
-  - session_unset + session_destroy + redirect
-
-- assets/css/theme.css
-  - PUP-inspired maroon/gold theme for Bootstrap-based UI
-
-# Validation & Security Notes
-
-- Sanitization: sanitize() wraps trim + htmlspecialchars
-- Validation:
-
-  - validateLogin, validateRegister, validateStudent, validateChange
   - Simple alpha checks for names (letters, spaces, dashes, periods)
 
-- Passwords:
+- **Passwords:**
 
-  - New registrations and changed passwords use password_hash()
-  - Login supports old plain text for the default admin account
+  - New registrations and changed passwords use `password_hash()`
+  - Login supports old plain text (for default admin only)
 
-- Simplicity by design:
-  - Procedural mysqli
-  - Direct SQL strings (no prepared statements) to match your style
-  - For production, use prepared statements and stronger validation
+- **Simplicity by Design:**
+  - Procedural MySQLi
+  - Direct SQL strings (for educational clarity)
+  - ⚠️ For production: use prepared statements and stronger validation
 
-## Requirements Mapping (for presentation)
+---
 
-- PHP/MySQL
+## 📘 Requirements Mapping (for Project Demo)
 
-  - All DB operations use procedural mysqli
+| Requirement                  | Implementation                                                                                                   |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **PHP/MySQL**                | All DB operations use procedural MySQLi                                                                          |
+| **Functions**                | `createStudent`, `updateStudent`, `deleteStudent`, `resetTable`, `searchRec`, plus validation/sanitize functions |
+| **Session Handling**         | Login/Logout protection for `students.php`                                                                       |
+| **Validation Function**      | Dedicated input validation functions                                                                             |
+| **HTML/CSS**                 | Bootstrap 5 + custom PUP theme                                                                                   |
+| **CRUD**                     | Create, Read, Update, Delete                                                                                     |
+| **Login/Logout via Session** | Implemented (`login.php`, `logout.php`)                                                                          |
 
-- Functions
+---
 
-  - createStudent, updateStudent, deleteStudent, resetTable, searchRec
-  - sanitize, validateLogin, validateRegister, validateStudent, validateChange
+## 👤 Default Account
 
-- Session
+**Username:** `admin`  
+**Password:** `admin123`
 
-  - Login/Logout; access protection for students.php
-  - Flash messages via $\_SESSION['message']
+> 📝 _Note: If you imported `setup.sql`, the admin user is created automatically via `INSERT IGNORE`. You can also register a new account anytime._
 
-- Validation Function
+---
 
-  - Dedicated functions + input sanitization
+## 📸 (Optional) Screenshots
 
-- HTML/CSS
+_Add screenshots of your Login page, Dashboard, or Student Table here to make your README visually appealing._
 
-  - Bootstrap 5 template + custom PUP theme
+---
 
-- CRUD
+### 🎯 Summary
 
-  - Create, Read (table), Update (search -> edit form), Delete
+This project demonstrates a fully functional **Student Information System** using **PHP (procedural)** and **MySQL**, styled with **Bootstrap 5** and a **PUP-inspired theme** — perfect for academic presentation or beginner-level web app development.
 
-- Login/Logout via Session
-  - Yes (login.php / logout.php)
+---
 
-## Default Account
-
-- Username: admin
-- Password: admin123
-
-NOTE: If you imported setup.sql, the admin is created with INSERT IGNORE. You can also register a new account anytime.
+**Developed by:** Neil Wayne Cruz  
+🖥️ _Information Technology Student_  
+📘 _For educational and presentation use only._
