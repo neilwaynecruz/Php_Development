@@ -1,0 +1,1132 @@
+/* ==========================================================
+   Base Design Notes
+   — Ang style ay modern minimalist para malinis at aestehtic tingnan.
+   — Balanced yung contrast para easy basahin, kahit light or dark mode pa.
+   ========================================================== */
+
+/* =========================
+   Design Tokens (Para sa Light Mode)
+   — Dito nakalagay lahat ng "ingredients" ng design natin.
+     Isipin mo to na parang global settings para sa colors, fonts,
+     shadows, at pagka-curve ng corners (border-radius) pag naka-light mode.
+   ========================= */
+:root {
+  /* yung root is ang pinaka main element */
+  color-scheme: light;
+
+  /* Neutrals – Mga general na kulay para sa background at text. */
+  --bg: #f0f2f5; /* Kulay ng pinaka-background ng page */
+  --surface: rgba(
+    255,
+    255,
+    255,
+    0.75
+  ); /* Kulay para sa mga elements na nasa ibabaw, like cards at navbar */
+  --surface-2: #e9eff7; /* Medyo darker na surface, para sa hover effects or selected items */
+  --border: #dee2e6; /* Kulay ng mga linya or borders */
+  --ink: #343a40; /* Kulay ng main text */
+  --ink-soft: #6c757d; /* Mas light na text, para sa mga secondary info */
+  --placeholder: #8b949e; /* Kulay ng text sa loob ng input fields bago ka mag-type */
+
+  /* Labels – Para sa mga name ng form fields at table headers. */
+  --label: #343a40;
+
+  /* Primary (Ito yung main color para sa mga button at links) */
+  --primary: #2b3035; /* Default na kulay ng button */
+  --primary-hover: #1c1f22; /* Kulay ng button pag na-hover */
+  --primary-text: #ffffff; /* Kulay ng text sa loob ng primary button */
+
+  /* Link colors (Para consistent sa kulay ng brand) */
+  --link-color: #0a58ca;
+  --link-rgb: 10, 88, 202; /* RGB version nito, para magamit sa box-shadow na may transparency */
+
+  /* Semantic colors (Mga kulay na may meaning, para sa alerts at status) */
+  --success: #16a34a; /* Green para sa "success" */
+  --danger: #dc2626; /* Red para sa "error" or "delete" */
+  --warning: #f59e0b; /* Orange/Yellow para sa "warning" */
+  --info: #0ea5e9; /* Blue para sa mga "info" or reminders */
+
+  /* Layout tokens – Mga shadow at pagka-curve ng gilid para maging modern ang look. */
+  --radius: 10px; /* Gaano ka-curve ang mga corners */
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Default na shadow ng elements */
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12); /* Shadow pag na-hover */
+
+  /* Bootstrap variable tie-ins (Para compatible sa Bootstrap styles) */
+  --bs-body-font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+  --bs-primary: var(--primary);
+  --bs-success: var(--success);
+  --bs-danger: var(--danger);
+  --bs-warning: var(--warning);
+  --bs-info: var(--info);
+  --bs-link-color: var(--link-color);
+}
+
+/* =========================
+   Design Tokens (Para sa Dark Mode)
+   — Same lang sa taas, pero in-adjust yung colors para comfy
+     sa mata kapag dark ang theme.
+   ========================= */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0e1218;
+  --surface: #151b24;
+  --surface-2: #0f141c;
+  --border: #273144;
+  --ink: #eef3f8;
+  --ink-soft: #cfd6de;
+  --placeholder: #b7c0ca;
+  --label: #f2f6fa;
+  --primary: #f3f4f6;
+  --primary-hover: #e5e7eb;
+  --primary-text: #0f141b;
+  --link-color: #2196f3;
+  --link-rgb: 33, 150, 243;
+}
+
+/* =========================
+   Base & Global Settings
+   — Ito yung mga universal styles na nag-aapply sa buong website,
+     para sa body, texts, at default na itsura ng fonts.
+   ========================= */
+html,
+body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  scroll-behavior: smooth; /* Para smooth ang pag-scroll pag may link na pinindot */
+  font-size: 16px;
+  line-height: 1.6;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  font-weight: 700;
+}
+/* Para sure na consistent ang .bg-light kahit dark mode. */
+.bg-light {
+  background-color: var(--bg) !important;
+}
+/* Para sa mga "muted" text, yung mga hindi dapat masyadong pansinin. */
+.small,
+.form-text,
+.text-muted {
+  color: var(--ink-soft) !important;
+}
+/* Tweak lang sa muted text pag dark mode para mabasa pa rin. */
+:root[data-theme="dark"] .text-muted,
+:root[data-theme="dark"] .table .text-muted {
+  color: #dbe3ea !important;
+}
+/* Style para sa "empty state" sa tables or cards (e.g., "No data available"). */
+.table td.text-center.text-muted,
+.card .text-muted {
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+/* Style ng mga link para malinis at consistent sa lahat ng browser. */
+a {
+  color: var(--link-color);
+  text-decoration-line: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: from-font;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+/* Accessibility - Respect sa mga user na ayaw ng maraming animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+/* Smooth transition para hindi bigla yung pag-change ng colors pag nag-switch ng mode. */
+.btn,
+.card,
+.form-control,
+.form-select,
+.table,
+.navbar,
+.alert {
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* =========================
+   Navbar Section (Yung nasa taas)
+   — Dito nakalagay ang styles para sa navigation bar.
+   — Ang focus ay para maging clear at balanced tingnan sa light at dark mode.
+   ========================= */
+.navbar {
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.navbar .navbar-brand,
+.navbar .navbar-text,
+.navbar .nav-link {
+  color: var(--ink) !important;
+}
+/* Para uniform ang style ng mga outline button sa loob ng navbar. */
+.navbar .btn-outline-light {
+  color: var(--ink);
+  border-color: var(--border);
+}
+.navbar .btn-outline-light:hover {
+  background: var(--surface-2);
+}
+/* Dark mode-specific style para sa outline button sa navbar. */
+:root[data-theme="dark"] .navbar .btn-outline-light {
+  color: var(--ink);
+  border-color: var(--border);
+}
+:root[data-theme="dark"] .navbar .btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+/* Maliit na bilog sa tabi ng brand logo. */
+.brand-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #34d399, #3b82f6 70%);
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* =========================
+   Cards Section
+   — Ito yung mga "box" or container para sa content, tables, at stats.
+   ========================= */
+.card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+.card .card-title {
+  font-weight: 700;
+  color: var(--ink);
+}
+/* Para sure na nababasa ang mga label at title sa card kahit dark mode. */
+.card .form-label,
+.card .card-title,
+.card h5,
+.card h6 {
+  color: var(--label);
+}
+/* Para sa mga stat at auth cards, neutral lang ang border para clean tingnan. */
+.stat-card,
+.auth-card {
+  border: 1px solid var(--border);
+}
+
+/* =========================
+   Buttons Section
+   — Ito yung main styles ng button para consistent ang itsura.
+   ========================= */
+.btn {
+  border-radius: var(--radius);
+  font-weight: 600;
+  padding: 0.58rem 1.1rem;
+}
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-text);
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: var(--primary-text);
+}
+/* Secondary buttons – Yung simple lang na may border. */
+.btn-secondary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--ink);
+}
+.btn-secondary:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+/* Better focus indicator para sa accessibility (para sa mga gumagamit ng keyboard). */
+.btn:focus-visible,
+.theme-fab:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--link-rgb), 0.25);
+}
+:root[data-theme="dark"] .btn:focus-visible,
+:root[data-theme="dark"] .theme-fab:focus-visible,
+:root[data-theme="dark"] .form-control:focus-visible,
+:root[data-theme="dark"] .form-select:focus-visible {
+  box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.35);
+}
+
+/* =========================
+   Forms (Input fields, etc.)
+   ========================= */
+.form-label,
+label {
+  color: var(--label);
+  font-weight: 600;
+}
+.form-control,
+.form-select {
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  padding: 0.6rem 0.8rem;
+  caret-color: var(--ink);
+}
+:root[data-theme="dark"] .form-control,
+:root[data-theme="dark"] .form-select {
+  background: #101723;
+  border-color: #2a3649;
+  color: #eef3f8;
+}
+/* Para mabasa ang placeholder text sa light at dark mode. */
+.form-control::placeholder {
+  color: var(--placeholder);
+  opacity: 0.95;
+}
+.form-control:-ms-input-placeholder,
+.form-control::-ms-input-placeholder {
+  color: var(--placeholder);
+}
+/* =========================
+   Input focus styles
+   — Para may highlight kapag naka-select or naka-focus ang input/select
+   ========================= */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 3px rgba(var(--link-rgb), 0.15);
+  background: var(--surface);
+  outline: none;
+}
+:root[data-theme="dark"] .form-control:focus,
+:root[data-theme="dark"] .form-select:focus {
+  background: #121a28;
+  border-color: #3a86ff;
+  box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.18);
+}
+
+/* =========================
+   Headline Numbers / Stats
+   — Malalaking numero o importanteng text sa dashboard
+   ========================= */
+.display-6,
+.h1,
+.h2,
+.h3 {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* =========================
+   Tables (Listahan ng data)
+   — Para sa product list, users, etc.
+   ========================= */
+.table {
+  color: var(--ink);
+}
+.table thead th {
+  background: var(--surface-2);
+  border-bottom: 2px solid var(--border);
+  color: var(--label);
+  text-transform: none;
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+}
+:root[data-theme="dark"] .table thead th {
+  background: #121a28;
+  color: var(--label);
+  border-bottom-color: #2a3649;
+}
+.table > :not(caption) > * > * {
+  border-bottom-width: 1px;
+  border-color: var(--border);
+}
+/* Row hover effect para makita kung nasaan ang cursor */
+.table-hover tbody tr:hover {
+  background: var(--surface-2);
+}
+:root[data-theme="dark"] .table-hover tbody tr:hover {
+  background: #121a28;
+}
+/* Para readable pa rin ang text sa empty state row kahit dark mode */
+:root[data-theme="dark"] .table td.text-muted {
+  color: #dbe3ea !important;
+}
+
+/* Low-stock styling: may color ang row at may attention-grabbing badge */
+.table-warning {
+  --bs-table-bg: transparent !important;
+  --bs-table-color: inherit !important;
+}
+.table-warning td {
+  background: rgba(245, 158, 11, 0.08);
+}
+/* Badge animation para alert agad ang user */
+.badge.bg-warning {
+  color: #1f2937 !important;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.28);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}
+
+/* =========================
+   Alerts (Mga notification box)
+   — Para sa success, error, warning messages
+   ========================= */
+.alert {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  box-shadow: var(--shadow);
+}
+:root[data-theme="dark"] .alert {
+  background: var(--surface);
+}
+/* Icon styling */
+.alert .alert-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.1rem;
+  opacity: 0.95;
+}
+/* Alert content flex para mag-stretch sa available space */
+.alert .alert-content {
+  flex: 1;
+}
+/* =========================
+   Specific Alert Types
+   — Error, Success, etc. para agad makita ang type ng notification
+   ========================= */
+.alert-danger {
+  border-left: 6px solid var(--danger);
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.22);
+}
+:root[data-theme="dark"] .alert-danger {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+.alert-danger .alert-icon {
+  color: var(--danger);
+}
+.alert-success {
+  border-left: 6px solid var(--success);
+  background: rgba(22, 163, 74, 0.08);
+  border-color: rgba(22, 163, 74, 0.722);
+}
+:root[data-theme="dark"] .alert-success {
+  background: rgba(22, 163, 74, 0.12);
+  border-color: rgba(22, 163, 74, 0.3);
+}
+.alert-success .alert-icon {
+  color: var(--success);
+}
+.alert-warning {
+  border-left: 6px solid var(--warning);
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.22);
+}
+:root[data-theme="dark"] .alert-warning {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+.alert-warning .alert-icon {
+  color: var(--warning);
+}
+.alert-info {
+  border-left: 6px solid var(--info);
+  background: rgba(14, 165, 233, 0.08);
+  border-color: rgba(14, 165, 233, 0.22);
+}
+:root[data-theme="dark"] .alert-info {
+  background: rgba(14, 165, 233, 0.12);
+  border-color: rgba(14, 165, 233, 0.3);
+}
+.alert-info .alert-icon {
+  color: var(--info);
+}
+/* Animation para sa pag-appear ng alert (ginagamit ng ui-enhance.js) */
+.alert-animate {
+  animation: alertIn 0.22s ease-out both;
+}
+@keyframes alertIn {
+  from {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.alert-dim {
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+.alert-dim.dimmed {
+  opacity: 0.96;
+  filter: saturate(0.96);
+}
+
+/* =========================
+   Alignment ng actions sa Users table
+   — Para maayos ang buttons at input fields sa row ng table
+   ========================= */
+.table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.table-actions .password-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.table-actions .form-control-sm {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  line-height: 1.4;
+}
+.table-actions .password-wrap .form-control {
+  width: 200px;
+  max-width: 220px;
+}
+/* Responsive design: sa maliit na screen, mag-stack ang actions */
+@media (max-width: 576px) {
+  .table-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+  }
+  .table-actions .password-wrap {
+    width: 100%;
+  }
+  .table-actions .password-wrap .form-control {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* =========================
+   Floating Theme Toggle (Yung bilog na button sa bottom right)
+   — Para madaling mag-toggle ng light/dark mode
+   ========================= */
+.theme-fab {
+  position: fixed;
+  bottom: max(16px, calc(env(safe-area-inset-bottom, 0) + 16px));
+  right: max(16px, calc(env(safe-area-inset-right, 0) + 16px));
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 28px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  z-index: 1040;
+  line-height: 1;
+  text-decoration: none;
+}
+.theme-fab .icon-sun i,
+.theme-fab .icon-moon i {
+  font-size: 16px;
+  line-height: 1;
+}
+.theme-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+:root[data-theme="dark"] .theme-fab {
+  background: #101723;
+  color: #eef3f8;
+  border-color: #2a3649;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+}
+:root[data-theme="dark"] .theme-fab:hover {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.65);
+}
+/* Responsive: sa mobile, icon lang para hindi masikip */
+@media (max-width: 576px) {
+  .theme-fab {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .theme-fab .label {
+    display: none;
+  }
+}
+
+/* === PRISM Brand Enhancement (Pampaganda ng Logo) === */
+.prism-logo {
+  width: clamp(56px, 4.2rem + 1vw, 92px);
+  height: auto;
+  display: inline-block;
+  vertical-align: middle;
+  user-select: none;
+  -webkit-user-drag: none;
+  object-fit: contain;
+  transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+    filter 0.35s ease;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+}
+:root[data-theme="dark"] .prism-logo {
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.55)) brightness(1.08);
+}
+.navbar-brand:hover .prism-logo {
+  transform: translateY(-4px) scale(1.03);
+}
+/* Animated gradient para sa "PRISM" text */
+.brand-text {
+  position: relative;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  line-height: 1;
+  font-size: clamp(1.55rem, 1.35rem + 1vw, 2.25rem);
+  background: linear-gradient(
+    130deg,
+    #ffffff 0%,
+    #ffd699 12%,
+    #ff9f6e 24%,
+    #e25b86 36%,
+    #b445c9 48%,
+    #6f78ff 60%,
+    #3ac8ff 72%,
+    #53ffa6 84%,
+    #ffffff 100%
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: prismShift 6.5s linear infinite;
+  padding-right: 0.25rem;
+  transition: filter 0.35s ease;
+}
+.navbar-brand:hover .brand-text {
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+}
+:root[data-theme="dark"] .navbar-brand:hover .brand-text {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.45));
+}
+@keyframes prismShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-text {
+    animation: none;
+    background-position: 50% 50%;
+  }
+  .navbar-brand:hover .prism-logo {
+    transform: none;
+  }
+  .navbar-brand:hover .brand-text {
+    filter: none;
+  }
+}
+
+/* === Users Table Column Layout Enhancements === */
+.users-table th,
+.users-table td {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+/* Specific column widths para hindi mag-overlap o masyadong siksik */
+.users-table .col-id {
+  width: 60px;
+}
+.users-table .col-username {
+  min-width: 160px;
+}
+.users-table .col-role {
+  min-width: 200px;
+}
+.users-table .col-password {
+  min-width: 260px;
+}
+.users-table .col-actions {
+  width: 140px;
+}
+/* Ensure internal form controls fill nicely without breaking row height */
+.users-table .role-form select,
+.users-table .password-form input {
+  min-width: 110px;
+}
+.users-table .password-form input {
+  flex: 1 1 auto;
+}
+/* Stack forms gracefully on very narrow screens */
+@media (max-width: 640px) {
+  .users-table .role-form,
+  .users-table .password-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .users-table .col-role,
+  .users-table .col-password,
+  .users-table .col-actions {
+    white-space: normal;
+  }
+}
+/* Toggle password icon size tweaks */
+.input-group .btn.toggle-visibility.btn-sm i,
+.password-wrap .btn.toggle-visibility.btn-sm i {
+  font-size: 0.85rem;
+}
+/* Users table: stack action buttons vertically and style Update button */
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+.action-stack .btn {
+  width: 100%;
+}
+/* Solid blue Update button with lighter hover */
+.btn-update-blue {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #ffffff;
+}
+.btn-update-blue:hover,
+.btn-update-blue:focus {
+  background-color: #2969ad;
+  border-color: #2969ad;
+  color: #ffffff;
+}
+/* Dark mode tweak ng Update button */
+:root[data-theme="dark"] .btn-update-blue {
+  background-color: #0d6efd;
+  border-color: #3a86ff;
+  color: white;
+}
+:root[data-theme="dark"] .btn-update-blue:hover,
+:root[data-theme="dark"] .btn-update-blue:focus {
+  background-color: #2969ad;
+  border-color: #2969ad;
+}
+/* Password toggle button padding tweaks */
+.password-wrap .toggle-visibility.btn-sm {
+  padding: 0.25rem 0.5rem;
+}
+
+/* === Activity Log Action Badges (Custom Palette) === */
+.badge-action {
+  display: inline-block;
+  padding: 0.38rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: lowercase;
+  border-radius: 12px;
+  line-height: 1;
+  border: 1px solid transparent;
+  user-select: none;
+  background: #6b7280;
+  color: #fff;
+}
+/* Specific colors for different actions */
+.badge-create {
+  background: #0f7a32;
+}
+.badge-update {
+  background: #b46900;
+}
+.badge-delete {
+  background: #c62828;
+}
+.badge-login {
+  background: #0d47a1;
+}
+.badge-logout {
+  background: #455a64;
+}
+.badge-archive {
+  background: #b88600;
+}
+.badge-restore {
+  background: #5d2bb8;
+}
+.badge-generic {
+  background: #6b7280;
+}
+/* Dark mode colors */
+:root[data-theme="dark"] .badge-create {
+  background: #16a34a;
+  border-color: #1f7d3d;
+}
+:root[data-theme="dark"] .badge-update {
+  background: #d97706;
+  border-color: #a05a04;
+}
+:root[data-theme="dark"] .badge-delete {
+  background: #dc2626;
+  border-color: #a61d1d;
+}
+:root[data-theme="dark"] .badge-login {
+  background: #2563eb;
+  border-color: #1d4fb5;
+}
+:root[data-theme="dark"] .badge-logout {
+  background: #64748b;
+  border-color: #4b5563;
+}
+:root[data-theme="dark"] .badge-archive {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #fff;
+}
+:root[data-theme="dark"] .badge-restore {
+  background: #7c3aed;
+  border-color: #5a27ad;
+}
+:root[data-theme="dark"] .badge-generic {
+  background: #6b7280;
+  border-color: #52575f;
+}
+/* Hover effect para sa badges */
+.badge-action:hover,
+.badge-action:focus {
+  filter: brightness(1.08);
+  text-decoration: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .badge-action {
+    transition: filter 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* =========================
+   Logs page styles (add to end of theme.css)
+   These rules use the same CSS variables as the rest of the theme so
+   the logs table will automatically follow light/dark mode.
+   ========================= */
+.logs-card .table-responsive {
+  background: var(--surface);
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+}
+:root[data-theme="dark"] .logs-card .table-responsive {
+  border-color: #2a3649;
+}
+.table-logs {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--ink);
+}
+.table-logs thead th {
+  background: var(--surface-2);
+  color: var(--label);
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  vertical-align: middle;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+:root[data-theme="dark"] .table-logs thead th {
+  background: #121a28;
+  border-bottom-color: #2a3649;
+}
+.table-logs tbody td {
+  padding: 0.6rem 0.75rem;
+  border-top: 1px solid var(--border);
+  color: var(--ink);
+  vertical-align: middle;
+  background: var(--surface);
+}
+.table-logs tbody tr:hover {
+  background: var(--surface-2);
+}
+:root[data-theme="dark"] .table-logs tbody tr:hover {
+  background: #121a28;
+}
+.table-logs td.details {
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 900px) {
+  .table-logs td.details {
+    white-space: normal;
+  }
+}
+.logs-pagination {
+  margin-top: 1rem;
+}
+@media (prefers-color-scheme: light) {
+  .table-logs tbody tr:nth-child(even) td {
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+.table-logs tbody tr:focus-within {
+  outline: none;
+  background: var(--surface-2);
+}
+@media (max-width: 576px) {
+  .table-logs td {
+    padding: 0.45rem 0.5rem;
+    font-size: 0.92rem;
+  }
+  .logs-card .table-responsive {
+    padding: 0.25rem;
+  }
+}
+
+/* ===== Logs table + pagination unified styling (append once at end) ===== */
+.pagination-theme .page-link {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.9rem;
+  transition: background-color 0.18s, color 0.18s, border-color 0.18s;
+}
+.pagination-theme .page-link:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+  text-decoration: none;
+}
+.pagination-theme .page-item.active .page-link {
+  background: #2969ad;
+  border-color: #2969ad;
+  color: #fff;
+}
+:root[data-theme="dark"] .pagination-theme .page-item.active .page-link {
+  background: #3a86ff;
+  border-color: #3a86ff;
+  color: #0f141b;
+}
+.pagination-theme .page-item.disabled .page-link {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+@media (max-width: 576px) {
+  .pagination-theme .page-link {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.78rem;
+  }
+}
+
+/* ==========================================================
+   Adaptive Auth Button + Active Products + Low-Stock Styling
+   (Appended code - keeps original comments intact)
+   ========================================================== */
+.btn-auth {
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--primary);
+  color: var(--primary-text);
+  letter-spacing: 0.4px;
+  transition: background-color 0.18s, color 0.18s, border-color 0.18s,
+    box-shadow 0.18s;
+}
+.btn-auth:hover,
+.btn-auth:focus {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: var(--primary-text);
+}
+:root[data-theme="dark"] .btn-auth {
+  background: #1c2531;
+  border-color: #2a3649;
+  color: #eef3f8;
+}
+:root[data-theme="dark"] .btn-auth:hover,
+:root[data-theme="dark"] .btn-auth:focus {
+  background: #273444;
+  border-color: #35465b;
+}
+/* Archive button variant (consistent across themes) */
+.btn-archive {
+  background: var(--warning);
+  border-color: var(--warning);
+  color: #1f2937;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+}
+.btn-archive:hover,
+.btn-archive:focus {
+  filter: brightness(1.06);
+  color: #1f2937;
+}
+:root[data-theme="dark"] .btn-archive {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #fff;
+}
+:root[data-theme="dark"] .btn-archive:hover {
+  filter: brightness(1.12);
+}
+/* Products table: adaptive header in dark mode if Bootstrap classes are present */
+:root[data-theme="dark"] .card .table thead th {
+  background: #121a28;
+  border-bottom-color: #2a3649;
+  color: var(--label);
+}
+/* Default row surface */
+.row-normal td {
+  background: var(--surface);
+}
+/* Low-stock row (high-contrast yet subtle in both themes) */
+.row-low-stock td {
+  background: rgba(245, 158, 11, 0.12);
+  position: relative;
+}
+:root[data-theme="dark"] .row-low-stock td {
+  background: rgba(245, 158, 11, 0.18);
+}
+/* Left indicator bar for low-stock rows */
+.row-low-stock td:first-child {
+  box-shadow: inset 3px 0 0 0 var(--warning);
+}
+/* Quantity badge for low stock (accessible) */
+.qty-alert-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.65rem;
+  padding: 0 0.45rem;
+  height: 1.28rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 0.6rem;
+  letter-spacing: 0.3px;
+  background: var(--warning);
+  color: #1f2937;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+}
+:root[data-theme="dark"] .qty-alert-badge {
+  background: #f59e0b;
+  color: #0f141b;
+  border-color: #8c5e00;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+}
+/* Hover state for low-stock rows */
+.table-hover .row-low-stock:hover td {
+  background: rgba(245, 158, 11, 0.18);
+}
+:root[data-theme="dark"] .table-hover .row-low-stock:hover td {
+  background: rgba(245, 158, 11, 0.26);
+}
+
+/* Pagination theme used in products/logs (already defined above; kept for context) */
+
+/* Smooth transitions for new elements */
+.row-low-stock td,
+.qty-alert-badge,
+.btn-archive,
+.btn-auth {
+  transition: background-color 0.18s ease, color 0.18s ease,
+    border-color 0.18s ease, filter 0.18s ease;
+}
+
+/* =========================
+   Users table adaptive theming (light/dark)
+   ========================= */
+.users-card .table-responsive {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.5rem;
+}
+/* Make sure Users table follows theme variables */
+.users-table thead th {
+  background: var(--surface-2);
+  color: var(--label);
+  border-bottom: 2px solid var(--border);
+  font-weight: 700;
+  vertical-align: middle;
+  padding: 0.6rem 0.75rem;
+}
+:root[data-theme="dark"] .users-table thead th {
+  background: #121a28;
+  border-bottom-color: #2a3649;
+  color: var(--label);
+}
+/* If table-light accidentally remains, override it gracefully */
+.users-table thead.table-light th {
+  background: var(--surface-2) !important;
+  color: var(--label) !important;
+  border-bottom-color: var(--border) !important;
+}
+/* Body cells */
+.users-table tbody td {
+  background: var(--surface);
+  color: var(--ink);
+  border-top: 1px solid var(--border);
+  padding: 0.6rem;
+  vertical-align: middle;
+}
+.users-table.table-hover tbody tr:hover td {
+  background: var(--surface-2);
+}
+:root[data-theme="dark"] .users-table.table-hover tbody tr:hover td {
+  background: #121a28;
+}
+.users-table th,
+.users-table td {
+  color: inherit;
+}
