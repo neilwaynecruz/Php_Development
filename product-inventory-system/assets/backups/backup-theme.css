@@ -68,6 +68,7 @@
    ========================= */
 :root[data-theme="dark"] {
   color-scheme: dark;
+
   --bg: #0e1218;
   --surface: #151b24;
   --surface-2: #0f141c;
@@ -76,9 +77,11 @@
   --ink-soft: #cfd6de;
   --placeholder: #b7c0ca;
   --label: #f2f6fa;
+
   --primary: #f3f4f6;
   --primary-hover: #e5e7eb;
   --primary-text: #0f141b;
+
   --link-color: #2196f3;
   --link-rgb: 33, 150, 243;
 }
@@ -97,6 +100,7 @@ body {
   font-size: 16px;
   line-height: 1.6;
 }
+
 h1,
 h2,
 h3,
@@ -107,37 +111,43 @@ h6 {
   letter-spacing: -0.2px;
   font-weight: 700;
 }
+
 /* Para sure na consistent ang .bg-light kahit dark mode. */
 .bg-light {
   background-color: var(--bg) !important;
 }
+
 /* Para sa mga "muted" text, yung mga hindi dapat masyadong pansinin. */
 .small,
 .form-text,
 .text-muted {
   color: var(--ink-soft) !important;
 }
+
 /* Tweak lang sa muted text pag dark mode para mabasa pa rin. */
 :root[data-theme="dark"] .text-muted,
 :root[data-theme="dark"] .table .text-muted {
   color: #dbe3ea !important;
 }
+
 /* Style para sa "empty state" sa tables or cards (e.g., "No data available"). */
 .table td.text-center.text-muted,
 .card .text-muted {
   font-weight: 500;
   letter-spacing: 0.2px;
 }
+
 /* Style ng mga link para malinis at consistent sa lahat ng browser. */
 a {
   color: var(--link-color);
   text-decoration-line: underline;
-  text-underline-offset: 2px;
-  text-decoration-thickness: from-font;
+  text-underline-offset: 2px; /* Space between text and underline */
+  text-decoration-thickness: from-font; /* Gaano kakapal yung underline, based sa font */
 }
 a:hover {
-  text-decoration-thickness: 2px;
+  text-decoration-thickness: 2px; /* Medyo kakapal pag hover */
 }
+
 /* Accessibility - Respect sa mga user na ayaw ng maraming animation. */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -147,6 +157,7 @@ a:hover {
     animation: none !important;
   }
 }
+
 /* Smooth transition para hindi bigla yung pag-change ng colors pag nag-switch ng mode. */
 .btn,
 .card,
@@ -166,8 +177,10 @@ a:hover {
    ========================= */
 .navbar {
   background: var(--surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(
+    16px
+  ); /* Nagbibigay ng parang frosted glass na effect */
+  -webkit-backdrop-filter: blur(16px); /* Para gumana sa Safari browser */
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow);
 }
@@ -176,6 +189,7 @@ a:hover {
 .navbar .nav-link {
   color: var(--ink) !important;
 }
+
 /* Para uniform ang style ng mga outline button sa loob ng navbar. */
 .navbar .btn-outline-light {
   color: var(--ink);
@@ -184,14 +198,21 @@ a:hover {
 .navbar .btn-outline-light:hover {
   background: var(--surface-2);
 }
+
 /* Dark mode-specific style para sa outline button sa navbar. */
 :root[data-theme="dark"] .navbar .btn-outline-light {
   color: var(--ink);
   border-color: var(--border);
 }
 :root[data-theme="dark"] .navbar .btn-outline-light:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(
+    255,
+    255,
+    255,
+    0.06
+  ); /* Medyo transparent white para may glow */
 }
+
 /* Maliit na bilog sa tabi ng brand logo. */
 .brand-dot {
   width: 10px;
@@ -211,16 +232,18 @@ a:hover {
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  overflow: hidden;
+  overflow: hidden; /* Para hindi lumagpas yung content sa curved corners */
 }
+/* Magkakaroon ng "lift" effect pag hinover ang card. */
 .card.card-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px); /* Aangat ng konti */
+  box-shadow: var(--shadow-hover); /* Mas malaki ang shadow */
 }
 .card .card-title {
   font-weight: 700;
   color: var(--ink);
 }
+
 /* Para sure na nababasa ang mga label at title sa card kahit dark mode. */
 .card .form-label,
 .card .card-title,
@@ -228,6 +251,7 @@ a:hover {
 .card h6 {
   color: var(--label);
 }
+
 /* Para sa mga stat at auth cards, neutral lang ang border para clean tingnan. */
 .stat-card,
 .auth-card {
@@ -254,6 +278,7 @@ a:hover {
   border-color: var(--primary-hover);
   color: var(--primary-text);
 }
+
 /* Secondary buttons – Yung simple lang na may border. */
 .btn-secondary {
   background: transparent;
@@ -264,13 +289,14 @@ a:hover {
   background: var(--surface-2);
   color: var(--ink);
 }
+
 /* Better focus indicator para sa accessibility (para sa mga gumagamit ng keyboard). */
 .btn:focus-visible,
 .theme-fab:focus-visible,
 .form-control:focus-visible,
 .form-select:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--link-rgb), 0.25);
+  outline: none; /* Tinatanggal natin yung default na pangit na outline */
+  box-shadow: 0 0 0 3px rgba(var(--link-rgb), 0.25); /* Pinalitan natin ng soft glow */
 }
 :root[data-theme="dark"] .btn:focus-visible,
 :root[data-theme="dark"] .theme-fab:focus-visible,
@@ -287,6 +313,7 @@ label {
   color: var(--label);
   font-weight: 600;
 }
+
 .form-control,
 .form-select {
   border-radius: var(--radius);
@@ -294,37 +321,42 @@ label {
   border: 1px solid var(--border);
   color: var(--ink);
   padding: 0.6rem 0.8rem;
-  caret-color: var(--ink);
+  caret-color: var(--ink); /* Kulay ng kumukurap na cursor sa input */
 }
+/* Iba ang background ng form sa dark mode para umangat or mag-stand out sa card. */
 :root[data-theme="dark"] .form-control,
 :root[data-theme="dark"] .form-select {
   background: #101723;
   border-color: #2a3649;
   color: #eef3f8;
 }
+
 /* Para mabasa ang placeholder text sa light at dark mode. */
 .form-control::placeholder {
   color: var(--placeholder);
   opacity: 0.95;
 }
-.form-control:-ms-input-placeholder,
+.form-control:-ms-input-placeholder {
+  color: var(--placeholder);
+}
 .form-control::-ms-input-placeholder {
   color: var(--placeholder);
 }
+
 /* =========================
    Input focus styles
    — Para may highlight kapag naka-select or naka-focus ang input/select
    ========================= */
 .form-control:focus,
 .form-select:focus {
-  border-color: var(--link-color);
-  box-shadow: 0 0 0 3px rgba(var(--link-rgb), 0.15);
-  background: var(--surface);
-  outline: none;
+  border-color: var(--link-color); /* Highlight ng border */
+  box-shadow: 0 0 0 3px rgba(var(--link-rgb), 0.15); /* Soft glow para guide sa user */
+  background: var(--surface); /* Konting background change para visible */
+  outline: none; /* Tanggalin default outline */
 }
 :root[data-theme="dark"] .form-control:focus,
 :root[data-theme="dark"] .form-select:focus {
-  background: #121a28;
+  background: #121a28; /* Dark mode background habang focus */
   border-color: #3a86ff;
   box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.18);
 }
@@ -338,7 +370,7 @@ label {
 .h2,
 .h3 {
   color: var(--ink);
-  font-weight: 700;
+  font-weight: 700; /* Bold para standout */
 }
 
 /* =========================
@@ -349,15 +381,15 @@ label {
   color: var(--ink);
 }
 .table thead th {
-  background: var(--surface-2);
+  background: var(--surface-2); /* Header may subtle background */
   border-bottom: 2px solid var(--border);
   color: var(--label);
-  text-transform: none;
+  text-transform: none; /* Hindi naka-uppercase */
   font-size: 0.95rem;
   letter-spacing: 0.2px;
 }
 :root[data-theme="dark"] .table thead th {
-  background: #121a28;
+  background: #121a28; /* Dark mode header bg */
   color: var(--label);
   border-bottom-color: #2a3649;
 }
@@ -372,6 +404,7 @@ label {
 :root[data-theme="dark"] .table-hover tbody tr:hover {
   background: #121a28;
 }
+
 /* Para readable pa rin ang text sa empty state row kahit dark mode */
 :root[data-theme="dark"] .table td.text-muted {
   color: #dbe3ea !important;
@@ -383,12 +416,12 @@ label {
   --bs-table-color: inherit !important;
 }
 .table-warning td {
-  background: rgba(245, 158, 11, 0.08);
+  background: rgba(245, 158, 11, 0.08); /* Transparent yellow */
 }
 /* Badge animation para alert agad ang user */
 .badge.bg-warning {
   color: #1f2937 !important;
-  animation: pulse 1.4s ease-in-out infinite;
+  animation: pulse 1.4s ease-in-out infinite; /* Paulit-ulit na "pulse" */
 }
 @keyframes pulse {
   0% {
@@ -411,14 +444,15 @@ label {
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--ink);
-  display: flex;
+  display: flex; /* Icon at text magkatabi */
   align-items: flex-start;
-  gap: 0.75rem;
+  gap: 0.75rem; /* Space sa icon at text */
   box-shadow: var(--shadow);
 }
 :root[data-theme="dark"] .alert {
   background: var(--surface);
 }
+
 /* Icon styling */
 .alert .alert-icon {
   width: 1.2rem;
@@ -433,13 +467,16 @@ label {
 .alert .alert-content {
   flex: 1;
 }
+
 /* =========================
    Specific Alert Types
    — Error, Success, etc. para agad makita ang type ng notification
    ========================= */
+
+/* Error (Red) */
 .alert-danger {
-  border-left: 6px solid var(--danger);
-  background: rgba(220, 38, 38, 0.08);
+  border-left: 6px solid var(--danger); /* Makapal na left border para kitang-kita */
+  background: rgba(220, 38, 38, 0.08); /* Light red background */
   border-color: rgba(220, 38, 38, 0.22);
 }
 :root[data-theme="dark"] .alert-danger {
@@ -449,6 +486,8 @@ label {
 .alert-danger .alert-icon {
   color: var(--danger);
 }
+
+/* Success (Green) */
 .alert-success {
   border-left: 6px solid var(--success);
   background: rgba(22, 163, 74, 0.08);
@@ -458,36 +497,42 @@ label {
   background: rgba(22, 163, 74, 0.12);
   border-color: rgba(22, 163, 74, 0.3);
 }
+
 .alert-success .alert-icon {
-  color: var(--success);
+  color: var(--success); /* Green icon para sa success messages */
 }
+
+/* Warning (Yellow/Orange) */
 .alert-warning {
-  border-left: 6px solid var(--warning);
-  background: rgba(245, 158, 11, 0.08);
+  border-left: 6px solid var(--warning); /* Makapal na left border para alert agad */
+  background: rgba(245, 158, 11, 0.08); /* Transparent yellow bg para subtle */
   border-color: rgba(245, 158, 11, 0.22);
 }
 :root[data-theme="dark"] .alert-warning {
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(245, 158, 11, 0.12); /* Dark mode version ng warning bg */
   border-color: rgba(245, 158, 11, 0.3);
 }
 .alert-warning .alert-icon {
-  color: var(--warning);
+  color: var(--warning); /* Icon kulay yellow/orange */
 }
+
+/* Info (Blue) */
 .alert-info {
-  border-left: 6px solid var(--info);
+  border-left: 6px solid var(--info); /* Blue left border para info */
   background: rgba(14, 165, 233, 0.08);
   border-color: rgba(14, 165, 233, 0.22);
 }
 :root[data-theme="dark"] .alert-info {
-  background: rgba(14, 165, 233, 0.12);
+  background: rgba(14, 165, 233, 0.12); /* Dark mode version ng info alert */
   border-color: rgba(14, 165, 233, 0.3);
 }
 .alert-info .alert-icon {
-  color: var(--info);
+  color: var(--info); /* Icon kulay blue */
 }
+
 /* Animation para sa pag-appear ng alert (ginagamit ng ui-enhance.js) */
 .alert-animate {
-  animation: alertIn 0.22s ease-out both;
+  animation: alertIn 0.22s ease-out both; /* Smooth slide + fade in */
 }
 @keyframes alertIn {
   from {
@@ -500,11 +545,11 @@ label {
   }
 }
 .alert-dim {
-  transition: opacity 0.3s ease, filter 0.3s ease;
+  transition: opacity 0.3s ease, filter 0.3s ease; /* Para gradual ang dim effect */
 }
 .alert-dim.dimmed {
   opacity: 0.96;
-  filter: saturate(0.96);
+  filter: saturate(0.96); /* Konting desaturation para mabawasan ang focus */
 }
 
 /* =========================
@@ -514,13 +559,13 @@ label {
 .table-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
+  justify-content: flex-end; /* Para nasa right side ang buttons */
+  gap: 0.5rem; /* Space sa pagitan ng items */
 }
 .table-actions .password-wrap {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.5rem; /* Space sa input at button */
 }
 .table-actions .form-control-sm {
   padding-top: 0.25rem;
@@ -534,7 +579,7 @@ label {
 /* Responsive design: sa maliit na screen, mag-stack ang actions */
 @media (max-width: 576px) {
   .table-actions {
-    flex-direction: column;
+    flex-direction: column; /* Vertical stacking */
     align-items: stretch;
     gap: 0.4rem;
   }
@@ -552,8 +597,11 @@ label {
    — Para madaling mag-toggle ng light/dark mode
    ========================= */
 .theme-fab {
-  position: fixed;
-  bottom: max(16px, calc(env(safe-area-inset-bottom, 0) + 16px));
+  position: fixed; /* Para laging visible kahit mag-scroll */
+  bottom: max(
+    16px,
+    calc(env(safe-area-inset-bottom, 0) + 16px)
+  ); /* Iwas sagging sa notch o bottom bar */
   right: max(16px, calc(env(safe-area-inset-right, 0) + 16px));
   display: inline-flex;
   align-items: center;
@@ -561,13 +609,13 @@ label {
   padding: 10px 16px;
   font-size: 14px;
   font-weight: 600;
-  border-radius: 28px;
+  border-radius: 28px; /* Capsule shape */
   background: var(--surface);
   color: var(--ink);
   border: 1px solid var(--border);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* Depth para naka-float effect */
   cursor: pointer;
-  z-index: 1040;
+  z-index: 1040; /* Always on top */
   line-height: 1;
   text-decoration: none;
 }
@@ -577,17 +625,18 @@ label {
   line-height: 1;
 }
 .theme-fab:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px); /* Konting lift effect kapag hover */
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22); /* Mas intense shadow habang hover */
 }
+
 :root[data-theme="dark"] .theme-fab {
-  background: #101723;
-  color: #eef3f8;
-  border-color: #2a3649;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+  background: #101723; /* Dark bg para sa floating theme button */
+  color: #eef3f8; /* Light text para contrast */
+  border-color: #2a3649; /* Dark border */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55); /* Mas malakas na shadow sa dark mode */
 }
 :root[data-theme="dark"] .theme-fab:hover {
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.65); /* Mas intense kapag hover */
 }
 /* Responsive: sa mobile, icon lang para hindi masikip */
 @media (max-width: 576px) {
@@ -596,36 +645,43 @@ label {
     font-size: 13px;
   }
   .theme-fab .label {
-    display: none;
+    display: none; /* Tinatago ang text label, icon lang */
   }
 }
 
 /* === PRISM Brand Enhancement (Pampaganda ng Logo) === */
+
+/* Logo: responsive size depende sa screen */
 .prism-logo {
-  width: clamp(56px, 4.2rem + 1vw, 92px);
+  width: clamp(56px, 4.2rem + 1vw, 92px); /* Min, preferred, max size */
   height: auto;
   display: inline-block;
   vertical-align: middle;
-  user-select: none;
-  -webkit-user-drag: none;
+  user-select: none; /* Hindi ma-select parang text */
+  -webkit-user-drag: none; /* Hindi ma-drag */
   object-fit: contain;
   transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
-    filter 0.35s ease;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+    filter 0.35s ease; /* Smooth transform + filter */
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25)); /* Konting shadow */
 }
+
+/* Mas malakas shadow sa dark mode */
 :root[data-theme="dark"] .prism-logo {
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.55)) brightness(1.08);
 }
+
+/* Hover effect: aangat at lalaki ng konti ang logo */
 .navbar-brand:hover .prism-logo {
   transform: translateY(-4px) scale(1.03);
 }
+
 /* Animated gradient para sa "PRISM" text */
 .brand-text {
   position: relative;
   font-weight: 700;
   letter-spacing: 0.6px;
   line-height: 1;
-  font-size: clamp(1.55rem, 1.35rem + 1vw, 2.25rem);
+  font-size: clamp(1.55rem, 1.35rem + 1vw, 2.25rem); /* Responsive font size */
   background: linear-gradient(
     130deg,
     #ffffff 0%,
@@ -639,19 +695,25 @@ label {
     #ffffff 100%
   );
   background-size: 300% 300%;
-  -webkit-background-clip: text;
+  -webkit-background-clip: text; /* Ginagawang mask text */
   background-clip: text;
-  color: transparent;
-  animation: prismShift 6.5s linear infinite;
+  color: transparent; /* Solid color hidden para lumabas gradient */
+  animation: prismShift 6.5s linear infinite; /* Paikot na gradient effect */
   padding-right: 0.25rem;
   transition: filter 0.35s ease;
 }
+
+/* Konting glow kapag hover sa navbar */
 .navbar-brand:hover .brand-text {
   filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
 }
+
+/* Mas malakas glow sa dark mode */
 :root[data-theme="dark"] .navbar-brand:hover .brand-text {
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.45));
 }
+
+/* Keyframes na nagpapagalaw sa gradient ng brand text */
 @keyframes prismShift {
   0% {
     background-position: 0% 50%;
@@ -663,25 +725,30 @@ label {
     background-position: 0% 50%;
   }
 }
+
+/* Users na may prefers-reduced-motion: freeze animation para sa accessibility */
 @media (prefers-reduced-motion: reduce) {
   .brand-text {
-    animation: none;
-    background-position: 50% 50%;
+    animation: none; /* Stop gradient animation */
+    background-position: 50% 50%; /* Freeze background position */
   }
   .navbar-brand:hover .prism-logo {
-    transform: none;
+    transform: none; /* No hover scale effect */
   }
   .navbar-brand:hover .brand-text {
-    filter: none;
+    filter: none; /* Remove glow */
   }
 }
 
 /* === Users Table Column Layout Enhancements === */
+/* Ginagawa para magmukhang maayos at organized ang users table sa desktop at mobile */
 .users-table th,
 .users-table td {
-  vertical-align: middle;
-  white-space: nowrap;
+  vertical-align: middle; /* Para centered ang content vertically */
+  white-space: nowrap; /* Huwag automatic na break ang text */
+  color: inherit;
 }
+
 /* Specific column widths para hindi mag-overlap o masyadong siksik */
 .users-table .col-id {
   width: 60px;
@@ -698,55 +765,61 @@ label {
 .users-table .col-actions {
   width: 140px;
 }
+
 /* Ensure internal form controls fill nicely without breaking row height */
 .users-table .role-form select,
 .users-table .password-form input {
   min-width: 110px;
 }
 .users-table .password-form input {
-  flex: 1 1 auto;
+  flex: 1 1 auto; /* Para mag-stretch depende sa available space */
 }
+
 /* Stack forms gracefully on very narrow screens */
 @media (max-width: 640px) {
   .users-table .role-form,
   .users-table .password-form {
-    flex-direction: column;
+    flex-direction: column; /* Stack vertically */
     align-items: stretch;
   }
   .users-table .col-role,
   .users-table .col-password,
   .users-table .col-actions {
-    white-space: normal;
+    white-space: normal; /* Para bumalik ang wrapping sa text */
   }
 }
+
 /* Toggle password icon size tweaks */
 .input-group .btn.toggle-visibility.btn-sm i,
 .password-wrap .btn.toggle-visibility.btn-sm i {
   font-size: 0.85rem;
 }
+
 /* Users table: stack action buttons vertically and style Update button */
 .action-stack {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
+  flex-direction: column; /* Vertical stack ng buttons */
+  align-items: flex-end; /* Naka-align sa right */
+  gap: 0.5rem; /* Space between buttons */
   min-width: 120px;
 }
 .action-stack .btn {
-  width: 100%;
+  width: 100%; /* Full width sa stack */
 }
+
 /* Solid blue Update button with lighter hover */
 .btn-update-blue {
-  background-color: #0d6efd;
+  background-color: #0d6efd; /* Primary blue */
   border-color: #0d6efd;
   color: #ffffff;
 }
 .btn-update-blue:hover,
 .btn-update-blue:focus {
-  background-color: #2969ad;
+  background-color: #2969ad; /* Darker on hover */
   border-color: #2969ad;
   color: #ffffff;
 }
+
 /* Dark mode tweak ng Update button */
 :root[data-theme="dark"] .btn-update-blue {
   background-color: #0d6efd;
@@ -758,12 +831,14 @@ label {
   background-color: #2969ad;
   border-color: #2969ad;
 }
+
 /* Password toggle button padding tweaks */
 .password-wrap .toggle-visibility.btn-sm {
   padding: 0.25rem 0.5rem;
 }
 
 /* === Activity Log Action Badges (Custom Palette) === */
+/* Para visually distinguish actions sa activity log */
 .badge-action {
   display: inline-block;
   padding: 0.38rem 0.7rem;
@@ -774,10 +849,11 @@ label {
   border-radius: 12px;
   line-height: 1;
   border: 1px solid transparent;
-  user-select: none;
-  background: #6b7280;
+  user-select: none; /* Hindi mase-select */
+  background: #6b7280; /* Default neutral gray */
   color: #fff;
 }
+
 /* Specific colors for different actions */
 .badge-create {
   background: #0f7a32;
@@ -800,10 +876,107 @@ label {
 .badge-restore {
   background: #5d2bb8;
 }
-.badge-generic {
-  background: #6b7280;
-}
+
 /* Dark mode colors */
+:root[data-theme="dark"] .badge-create {
+  background: #16a34a;
+  border-color: #1f7d3d;
+}
+:root[data-theme="dark"] .badge-update {
+  background: #d97706;
+  border-color: #a05a04;
+}
+:root[data-theme="dark"] .badge-delete {
+  background: #dc2626;
+  border-color: #a61d1d;
+}
+:root[data-theme="dark"] .badge-login {
+  background: #2563eb;
+  border-color: #1d4fb5;
+}
+:root[data-theme="dark"] .badge-logout {
+  background: #64748b;
+  border-color: #4b5563;
+}
+:root[data-theme="dark"] .badge-archive {
+  background: #e0b300;
+  border-color: #af8a00;
+  color: #1f1f1f;
+}
+:root[data-theme="dark"] .badge-restore {
+  background: #7c3aed;
+  border-color: #5a27ad;
+}
+
+/* Hover effect para sa badges */
+.badge-action:hover,
+.badge-action:focus {
+  filter: brightness(1.08); /* Konting glow / highlight */
+  text-decoration: none;
+}
+
+/* Smooth transition kung user ay walang prefers-reduced-motion */
+@media (prefers-reduced-motion: no-preference) {
+  .badge-action {
+    transition: filter 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* === Activity Log Action Badges === */
+/* Ginagamit para visually ma-distinguish ang iba't ibang action sa logs.
+   Inline-block para hindi masira layout, padding at font-size para readable. */
+.badge-action {
+  display: inline-block;
+  padding: 0.38rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: lowercase; /* Para uniform at hindi naka-uppercase */
+  border-radius: 12px; /* Rounded corners */
+  line-height: 1;
+  border: 1px solid transparent; /* Default transparent border */
+  user-select: none; /* Hindi pwedeng i-select na parang text */
+}
+
+/* -----------------
+   Light mode colors
+   ----------------- */
+.badge-create {
+  background: #0f7a32; /* Green */
+  color: #fff;
+}
+.badge-update {
+  background: #b46900; /* Amber */
+  color: #fff;
+}
+.badge-delete {
+  background: #c62828; /* Red */
+  color: #fff;
+}
+.badge-login {
+  background: #0d47a1; /* Blue */
+  color: #fff;
+}
+.badge-logout {
+  background: #455a64; /* Gray-blue */
+  color: #fff;
+}
+.badge-archive {
+  background: #b88600; /* Golden / Yellow */
+  color: #fff;
+}
+.badge-restore {
+  background: #5d2bb8; /* Indigo */
+  color: #fff;
+}
+.badge-generic {
+  background: #6b7280; /* Neutral gray */
+  color: #fff;
+}
+
+/* -----------------
+   Dark mode tuning
+   ----------------- */
 :root[data-theme="dark"] .badge-create {
   background: #16a34a;
   border-color: #1f7d3d;
@@ -827,7 +1000,7 @@ label {
 :root[data-theme="dark"] .badge-archive {
   background: #f59e0b;
   border-color: #f59e0b;
-  color: #fff;
+  color: white; /* Para readable sa dark background */
 }
 :root[data-theme="dark"] .badge-restore {
   background: #7c3aed;
@@ -837,12 +1010,15 @@ label {
   background: #6b7280;
   border-color: #52575f;
 }
-/* Hover effect para sa badges */
+
+/* Optional hover / focus effect para slight brightness increase */
 .badge-action:hover,
 .badge-action:focus {
-  filter: brightness(1.08);
-  text-decoration: none;
+  filter: brightness(1.08); /* Konting glow para ma-notice */
+  text-decoration: none; /* Wala underline o decoration sa hover */
 }
+
+/* Smooth transition kung user ay walang "prefers-reduced-motion" */
 @media (prefers-reduced-motion: no-preference) {
   .badge-action {
     transition: filter 0.2s ease, background-color 0.2s ease, color 0.2s ease;
@@ -854,20 +1030,22 @@ label {
    These rules use the same CSS variables as the rest of the theme so
    the logs table will automatically follow light/dark mode.
    ========================= */
+
 .logs-card .table-responsive {
   background: var(--surface);
   border-radius: calc(var(--radius) - 2px);
   border: 1px solid var(--border);
   padding: 0.5rem;
+  margin: 0 -0.5rem; /* align with card padding visually */
 }
-:root[data-theme="dark"] .logs-card .table-responsive {
-  border-color: #2a3649;
-}
+
+/* Primary logs table style that follows theme tokens */
 .table-logs {
   width: 100%;
   border-collapse: collapse;
   color: var(--ink);
 }
+
 .table-logs thead th {
   background: var(--surface-2);
   color: var(--label);
@@ -876,27 +1054,17 @@ label {
   vertical-align: middle;
   padding: 0.6rem 0.75rem;
   text-align: left;
-  position: sticky;
-  top: 0;
-  z-index: 5;
 }
-:root[data-theme="dark"] .table-logs thead th {
-  background: #121a28;
-  border-bottom-color: #2a3649;
-}
-.table-logs tbody td {
+
+.table-logs tbody tr td {
   padding: 0.6rem 0.75rem;
   border-top: 1px solid var(--border);
   color: var(--ink);
   vertical-align: middle;
   background: var(--surface);
 }
-.table-logs tbody tr:hover {
-  background: var(--surface-2);
-}
-:root[data-theme="dark"] .table-logs tbody tr:hover {
-  background: #121a28;
-}
+
+/* Make details column truncate on wide screens, wrap on small screens */
 .table-logs td.details {
   max-width: 420px;
   white-space: nowrap;
@@ -908,18 +1076,48 @@ label {
     white-space: normal;
   }
 }
+
+/* Ensure badge colors show up and remain consistent in table */
+.table-logs .badge-action {
+  display: inline-block;
+  padding: 0.28rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* Row hover respects theme variables */
+.table-logs tbody tr:hover {
+  background: var(--surface-2);
+}
+
+/* Make table header sticky (optional, small performance cost) */
+.table-logs thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Pagination spacing utility for logs */
 .logs-pagination {
   margin-top: 1rem;
 }
+
+/* Improve contrast for odd/even rows in light mode (soft striping) */
 @media (prefers-color-scheme: light) {
   .table-logs tbody tr:nth-child(even) td {
     background: rgba(0, 0, 0, 0.02);
   }
 }
-.table-logs tbody tr:focus-within {
+
+/* Accessibility - focus state for keyboard users */
+.table-logs tbody tr:focus-within,
+.table-logs tbody tr:focus {
   outline: none;
   background: var(--surface-2);
 }
+
+/* Small-screen adjustments */
 @media (max-width: 576px) {
   .table-logs td {
     padding: 0.45rem 0.5rem;
@@ -930,7 +1128,228 @@ label {
   }
 }
 
+/* Ensure the badge text is readable when some badge classes set dark text */
+.badge-action {
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+/* If you want slightly different border on dark mode for the logs wrapper */
+:root[data-theme="dark"] .logs-card .table-responsive {
+  border-color: #2a3649;
+  background: var(--surface);
+}
+
+.logs-card .table-responsive {
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 8px;
+}
+
+/* The logs table uses theme tokens so it matches light/dark automatically */
+.table-logs thead th {
+  background: var(--surface-2);
+  color: var(--label);
+  border-bottom: 2px solid var(--border);
+  font-weight: 700;
+  vertical-align: middle;
+}
+:root[data-theme="dark"] .table-logs thead th {
+  background: #121a28;
+  color: var(--label);
+  border-bottom-color: #2a3649;
+}
+
+.table-logs tbody tr td {
+  border-top: 1px solid var(--border);
+  color: var(--ink);
+  vertical-align: middle;
+  padding: 0.6rem 0.75rem;
+  background: var(--surface);
+}
+
+:root[data-theme="dark"] .table-logs tbody tr td {
+  color: var(--ink);
+  background: var(--surface);
+}
+
+/* details column: ellipsis on wide screens, wrap on small screens */
+.table-logs td.details {
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 900px) {
+  .table-logs td.details {
+    white-space: normal;
+  }
+}
+
+/* ensure badge colors show even inside table */
+.table-logs .badge-action {
+  display: inline-block;
+  padding: 0.28rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* subtle row hover that respects theme */
+.table-logs tbody tr:hover {
+  background: var(--surface-2);
+}
+:root[data-theme="dark"] .table-logs tbody tr:hover {
+  background: #121a28;
+}
+
+/* small screens: reduce padding */
+@media (max-width: 576px) {
+  .table-logs td {
+    padding: 0.45rem 0.5rem;
+    font-size: 0.92rem;
+  }
+}
+
+.logs-card .table-responsive {
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 8px;
+}
+
+/* The logs table uses theme tokens so it matches light/dark automatically */
+.table-logs thead th {
+  background: var(--surface-2);
+  color: var(--label);
+  border-bottom: 2px solid var(--border);
+  font-weight: 700;
+  vertical-align: middle;
+}
+:root[data-theme="dark"] .table-logs thead th {
+  background: #121a28;
+  color: var(--label);
+  border-bottom-color: #2a3649;
+}
+
+.table-logs tbody tr td {
+  border-top: 1px solid var(--border);
+  color: var(--ink);
+  vertical-align: middle;
+  padding: 0.6rem 0.75rem;
+  background: var(--surface);
+}
+
+:root[data-theme="dark"] .table-logs tbody tr td {
+  color: var(--ink);
+  background: var(--surface);
+}
+
+/* details column: ellipsis on wide screens, wrap on small screens */
+.table-logs td.details {
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 900px) {
+  .table-logs td.details {
+    white-space: normal;
+  }
+}
+
+/* ensure badge colors show even inside table */
+.table-logs .badge-action {
+  display: inline-block;
+  padding: 0.28rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* subtle row hover that respects theme */
+.table-logs tbody tr:hover {
+  background: var(--surface-2);
+}
+:root[data-theme="dark"] .table-logs tbody tr:hover {
+  background: #121a28;
+}
+
+/* small screens: reduce padding */
+@media (max-width: 576px) {
+  .table-logs td {
+    padding: 0.45rem 0.5rem;
+    font-size: 0.92rem;
+  }
+}
+
 /* ===== Logs table + pagination unified styling (append once at end) ===== */
+.logs-card .table-responsive {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.5rem;
+}
+
+.table-logs {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--ink);
+}
+.table-logs thead th {
+  background: var(--surface-2);
+  color: var(--label);
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  padding: 0.6rem 0.75rem;
+  vertical-align: middle;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+:root[data-theme="dark"] .table-logs thead th {
+  background: #121a28;
+  border-bottom-color: #2a3649;
+}
+
+.table-logs tbody td {
+  background: var(--surface);
+  color: var(--ink);
+  border-top: 1px solid var(--border);
+  padding: 0.6rem 0.75rem;
+  vertical-align: middle;
+}
+.table-logs tbody tr:hover {
+  background: var(--surface-2);
+}
+:root[data-theme="dark"] .table-logs tbody tr:hover {
+  background: #121a28;
+}
+
+/* Details truncation on wide screens */
+.table-logs td.details {
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 900px) {
+  .table-logs td.details {
+    white-space: normal;
+  }
+}
+
+/* Badge sizing inside logs table */
+.table-logs .badge-action {
+  padding: 0.28rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 10px;
+  color: #fff;
+}
+
+/* Pagination theme */
 .pagination-theme .page-link {
   background: var(--surface);
   color: var(--ink);
@@ -962,17 +1381,30 @@ label {
   cursor: not-allowed;
   opacity: 0.55;
 }
+
+/* Smaller screens */
 @media (max-width: 576px) {
+  .table-logs td {
+    padding: 0.45rem 0.5rem;
+    font-size: 0.92rem;
+  }
   .pagination-theme .page-link {
     padding: 0.45rem 0.65rem;
     font-size: 0.78rem;
   }
 }
 
-/* ==========================================================
+/* Strong fallback (in case Bootstrap overrides) */
+.table-logs thead th,
+.table-logs tbody td {
+  background: var(--surface);
+  color: var(--ink);
+} /* ==========================================================
    Adaptive Auth Button + Active Products + Low-Stock Styling
    (Appended code - keeps original comments intact)
    ========================================================== */
+
+/* Adaptive login/auth button (dark/light) */
 .btn-auth {
   font-weight: 600;
   border: 1px solid var(--border);
@@ -998,6 +1430,7 @@ label {
   background: #273444;
   border-color: #35465b;
 }
+
 /* Archive button variant (consistent across themes) */
 .btn-archive {
   background: var(--warning);
@@ -1014,21 +1447,24 @@ label {
 :root[data-theme="dark"] .btn-archive {
   background: #f59e0b;
   border-color: #f59e0b;
-  color: #fff;
+  color: white;
 }
 :root[data-theme="dark"] .btn-archive:hover {
   filter: brightness(1.12);
 }
+
 /* Products table: adaptive header in dark mode if Bootstrap classes are present */
 :root[data-theme="dark"] .card .table thead th {
   background: #121a28;
   border-bottom-color: #2a3649;
   color: var(--label);
 }
+
 /* Default row surface */
 .row-normal td {
   background: var(--surface);
 }
+
 /* Low-stock row (high-contrast yet subtle in both themes) */
 .row-low-stock td {
   background: rgba(245, 158, 11, 0.12);
@@ -1037,10 +1473,12 @@ label {
 :root[data-theme="dark"] .row-low-stock td {
   background: rgba(245, 158, 11, 0.18);
 }
+
 /* Left indicator bar for low-stock rows */
 .row-low-stock td:first-child {
   box-shadow: inset 3px 0 0 0 var(--warning);
 }
+
 /* Quantity badge for low stock (accessible) */
 .qty-alert-badge {
   display: inline-flex;
@@ -1064,6 +1502,7 @@ label {
   border-color: #8c5e00;
   box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
 }
+
 /* Hover state for low-stock rows */
 .table-hover .row-low-stock:hover td {
   background: rgba(245, 158, 11, 0.18);
@@ -1072,7 +1511,46 @@ label {
   background: rgba(245, 158, 11, 0.26);
 }
 
-/* Pagination theme used in products/logs (already defined above; kept for context) */
+/* Pagination theme used in products/logs */
+.pagination-theme .page-link {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.9rem;
+  transition: background-color 0.18s, color 0.18s, border-color 0.18s;
+}
+.pagination-theme .page-link:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+  text-decoration: none;
+}
+.pagination-theme .page-item.active .page-link {
+  background: #2969ad;
+  border-color: #2969ad;
+  color: #fff;
+}
+:root[data-theme="dark"] .pagination-theme .page-item.active .page-link {
+  background: #3a86ff;
+  border-color: #3a86ff;
+  color: #0f141b;
+}
+.pagination-theme .page-item.disabled .page-link {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Small-screen tweaks */
+@media (max-width: 576px) {
+  .pagination-theme .page-link {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.78rem;
+  }
+}
 
 /* Smooth transitions for new elements */
 .row-low-stock td,
@@ -1081,17 +1559,17 @@ label {
 .btn-auth {
   transition: background-color 0.18s ease, color 0.18s ease,
     border-color 0.18s ease, filter 0.18s ease;
-}
-
-/* =========================
+} /* =========================
    Users table adaptive theming (light/dark)
    ========================= */
+
 .users-card .table-responsive {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: calc(var(--radius) - 2px);
   padding: 0.5rem;
 }
+
 /* Make sure Users table follows theme variables */
 .users-table thead th {
   background: var(--surface-2);
@@ -1102,30 +1580,34 @@ label {
   padding: 0.6rem 0.75rem;
 }
 :root[data-theme="dark"] .users-table thead th {
-  background: #121a28;
-  border-bottom-color: #2a3649;
-  color: var(--label);
+  background: #121a28; /* dark header background */
+  border-bottom-color: #2a3649; /* dark divider */
+  color: var(--label); /* near-white label text */
 }
+
 /* If table-light accidentally remains, override it gracefully */
 .users-table thead.table-light th {
   background: var(--surface-2) !important;
   color: var(--label) !important;
   border-bottom-color: var(--border) !important;
 }
+
 /* Body cells */
 .users-table tbody td {
   background: var(--surface);
-  color: var(--ink);
+  color: var(--ink); /* light text in dark mode, dark text in light mode */
   border-top: 1px solid var(--border);
   padding: 0.6rem;
   vertical-align: middle;
 }
+
 .users-table.table-hover tbody tr:hover td {
   background: var(--surface-2);
 }
 :root[data-theme="dark"] .users-table.table-hover tbody tr:hover td {
   background: #121a28;
 }
+
 .users-table th,
 .users-table td {
   color: inherit;

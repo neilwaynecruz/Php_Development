@@ -2,16 +2,19 @@
 ob_start();
 session_start();
 
+// Guard: kung hindi naka-login, redirect sa login page
 if (!isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
 }
 
+// Connect sa database
 $connection = mysqli_connect("localhost", "root", "", "inventory_db");
 if (!$connection) {
     die("No connection: " . mysqli_connect_error());
 }
 
+// Role check: admin-only page
 $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'user';
 $isAdmin = ($role === 'admin');
 if (!$isAdmin) {
@@ -20,14 +23,16 @@ if (!$isAdmin) {
     exit();
 }
 
-// Handlers
-if (isset($_POST["create"])) { createUser(); }
-if (isset($_POST["changeRole"])) { changeRole(); }
-if (isset($_POST["changePass"])) { changePass(); }
-if (isset($_POST["delete"])) { deleteUser(); }
+// Handlers: check kung may POST action
+if (isset($_POST["create"])) { createUser(); }      // Create new user
+if (isset($_POST["changeRole"])) { changeRole(); }  // Change role ng user
+if (isset($_POST["changePass"])) { changePass(); }  // Change password ng user
+if (isset($_POST["delete"])) { deleteUser(); }      // Delete user
 
+// Helper: sanitize input para safe sa HTML
 function sanitize($str) { return htmlspecialchars(trim($str)); }
 
+// Validate username/password/role inputs
 function validateUser($u, $p, $r, $isCreate=true) {
     $errors = [];
     if ($u === '') $errors[] = "Username is required.";
@@ -38,6 +43,7 @@ function validateUser($u, $p, $r, $isCreate=true) {
     return $errors;
 }
 
+// Create new user
 function createUser() {
     global $connection;
 
@@ -47,18 +53,20 @@ function createUser() {
 
     $errors = validateUser($username, $password, $role, true);
 
-    // Check if username exists (simple query)
+    // Check if username exists
     $exists = false;
     $q = mysqli_query($connection, "SELECT username FROM users WHERE username = '" . mysqli_real_escape_string($connection,$username) . "'");
     if ($q && mysqli_num_rows($q) > 0) $exists = true;
     if ($exists) { $errors[] = "Username is already taken."; }
 
     if (!empty($errors)) {
+        // Show error messages
         $_SESSION["message"] = '<div class="alert alert-danger">'. implode("<br>", $errors) .'</div>';
         header("Location: " . htmlspecialchars($_SERVER["PHP_SELF"]));
         exit();
     }
 
+    // Insert sa DB
     $hash = password_hash($password, PASSWORD_DEFAULT);
     $u = mysqli_real_escape_string($connection, $username);
     $r = mysqli_real_escape_string($connection, $role);
@@ -72,6 +80,7 @@ function createUser() {
     exit();
 }
 
+// Change role ng existing user
 function changeRole() {
     global $connection;
     $uid = (int)$_POST["uid"];
@@ -91,6 +100,7 @@ function changeRole() {
     exit();
 }
 
+// Change password ng user
 function changePass() {
     global $connection;
     $uid = (int)$_POST["uid"];
@@ -110,6 +120,7 @@ function changePass() {
     exit();
 }
 
+// Delete user (hindi pwedeng self-delete)
 function deleteUser() {
     global $connection;
     $uid = (int)$_POST["uid"];
@@ -138,13 +149,14 @@ function deleteUser() {
     <meta charset="UTF-8">
     <title>Users | Product Inventory System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap + Theme -->
+    <!-- Bootstrap + Theme CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="assets/css/theme.css" rel="stylesheet">
+    <link href="assets/css/theme.css?v=7" rel="stylesheet">
 </head>
 <body class="bg-light">
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="products.php">
@@ -160,6 +172,7 @@ function deleteUser() {
     </nav>
 
     <div class="container py-4">
+        <!-- Flash messages -->
         <?php
         if (isset($_SESSION['message'])) {
             echo $_SESSION['message'];
@@ -168,6 +181,7 @@ function deleteUser() {
         ?>
 
         <div class="row g-4">
+            <!-- Add User Form -->
             <div class="col-md-5">
                 <div class="card shadow-sm card-lift">
                     <div class="card-body">
@@ -199,13 +213,15 @@ function deleteUser() {
                 </div>
             </div>
 
+            <!-- Users Table -->
             <div class="col-md-7">
-                <div class="card shadow-sm card-lift">
+                <div class="card shadow-sm card-lift users-card">
                     <div class="card-body">
                         <h5 class="card-title mb-3">User Accounts</h5>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle users-table">
-                                <thead class="table-light">
+                                <!-- remove Bootstrap's table-light so theme variables apply -->
+                                <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Username</th>
@@ -216,6 +232,7 @@ function deleteUser() {
                                 </thead>
                                 <tbody>
                                 <?php
+                                // Fetch all users from DB
                                 $rs = mysqli_query($connection, "SELECT * FROM users ORDER BY uid DESC");
                                 if ($rs && mysqli_num_rows($rs) > 0) {
                                     while ($row = mysqli_fetch_assoc($rs)) {
@@ -227,6 +244,7 @@ function deleteUser() {
                                             <td>'. $uid .'</td>
                                             <td>'. $uname .'</td>
                                             <td>
+                                                <!-- Change role form -->
                                                 <form action="'. htmlspecialchars($_SERVER["PHP_SELF"]) .'" method="POST" class="d-flex gap-2 align-items-center role-form">
                                                     <input type="hidden" name="uid" value="'. $uid .'">
                                                     <select name="role" class="form-select form-select-sm">
@@ -237,6 +255,7 @@ function deleteUser() {
                                                 </form>
                                             </td>
                                             <td>
+                                                <!-- Change password form -->
                                                 <form id="passForm-'. $uid .'" action="'. htmlspecialchars($_SERVER["PHP_SELF"]) .'" method="POST" class="password-wrap password-toggle d-flex align-items-center gap-2">
                                                     <input type="hidden" name="uid" value="'. $uid .'">
                                                     <input type="password" name="new" class="form-control form-control-sm" placeholder="New password" data-toggle="password">
@@ -247,9 +266,10 @@ function deleteUser() {
                                             </td>
                                             <td class="text-end">
                                                 <div class="action-stack">
-                                                    <!-- Submit the password form above from here -->
+                                                    <!-- Submit password form -->
                                                     <button type="submit" form="passForm-'. $uid .'" name="changePass" value="1" class="btn btn-sm btn-update-blue">Update</button>
 
+                                                    <!-- Delete user -->
                                                     <form action="'. htmlspecialchars($_SERVER["PHP_SELF"]) .'" method="POST" onsubmit="return confirm(\'Delete user '. $uname .'?\');" class="d-inline-block w-100">
                                                         <input type="hidden" name="uid" value="'. $uid .'">
                                                         <button type="submit" name="delete" class="btn btn-sm btn-danger w-100">Delete</button>
@@ -273,12 +293,14 @@ function deleteUser() {
 
     </div>
 
+    <!-- Theme toggle -->
     <button id="themeToggle" class="theme-fab" type="button" aria-label="Toggle color theme" title="Toggle theme">
         <span class="icon-sun" aria-hidden="true"><i class="fa-solid fa-sun"></i></span>
         <span class="icon-moon" aria-hidden="true"><i class="fa-solid fa-moon"></i></span>
         <span class="label">Theme</span>
     </button>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/password-toggle.js?v=1"></script>
     <script src="assets/js/theme-toggle.js"></script>
