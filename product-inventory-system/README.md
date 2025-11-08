@@ -126,15 +126,23 @@ svn export https://github.com/neilwaynecruz/Php_Development/trunk/product-invent
 ## File Structure
 
 ```
-/prism-inventory/
-├─ index.html               # Main entry page
-├─ theme.css                # Theme styling (light/dark mode)
-├─ ui-enhance.js            # Enhances alerts, icons, and animations
-├─ theme-toggle.js          # Floating theme toggle functionality
+/product-inventory-system/
 ├─ assets/
-│  ├─ images/               # Logos, icons
-│  └─ fonts/                # Poppins or other fonts
-└─ README.md
+│ ├─ backups/ # SQL backups or exported data
+│ ├─ css/ # Stylesheets (theme, layout, UI components)
+│ ├─ img/ # Images, icons, and logos
+│ └─ js/ # JavaScript files (UI logic, validation, etc.)
+│
+├─ account.php # User account management page
+├─ index.html # Main landing page or system entry point
+├─ inventory_setup.sql # Database setup or schema file
+├─ login.php # Login page with authentication logic
+├─ logout.php # Logout handler
+├─ logs.php # Activity logs display and management
+├─ products.php # Product inventory management page
+├─ register.php # User registration page
+├─ users.php # User list and management page
+└─ README.md # Project documentation
 ```
 
 ---
