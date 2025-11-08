@@ -43,6 +43,9 @@ function validateUser($u, $p, $r, $isCreate=true) {
     return $errors;
 }
 
+
+//CRUD
+
 // Create new user
 function createUser() {
     global $connection;

@@ -85,8 +85,8 @@ function createProduct() {
 
     $name = sanitize($_POST["pName"]);
     $category = sanitize($_POST["pCategory"]);
-    $qty = (int)$_POST["pQty"];         
-    $price = (float)$_POST["pPrice"];    
+    $qty = (int)$_POST["pQty"];
+    $price = (float)$_POST["pPrice"];
 
     $errors = validateProduct($name, $category, $qty, $price);
     if (!empty($errors)) {
@@ -104,8 +104,8 @@ function createProduct() {
     mysqli_stmt_bind_param($stmt, "ssid", $name, $category, $qty, $price);
 
     if (mysqli_stmt_execute($stmt)) {
-        $newId = mysqli_insert_id($connection); // get new product id
-        logActivity('create', $newId, "Added: $name"); // log action
+        $newId = mysqli_insert_id($connection);
+        logActivity('create', $newId, "Added: $name");
         $_SESSION["message"] = '<div class="alert alert-success">Product added!</div>';
     } else {
         $_SESSION["message"] = '<div class="alert alert-danger">Database error: '. htmlspecialchars(mysqli_stmt_error($stmt)) .'</div>';
@@ -160,7 +160,6 @@ function archiveProduct() {
     $stmt = mysqli_prepare($connection, "UPDATE products SET is_archived = 1 WHERE product_id = ?");
     mysqli_stmt_bind_param($stmt, "i", $id);
     if (mysqli_stmt_execute($stmt)) {
-        // Fetch name for better log detail
         $name = fetchProductName($id);
         logActivity('archive', $id, "Archived product: " . ($name ?? "ID $id"));
         $_SESSION["message"] = '<div class="alert alert-warning">Product archived.</div>';
@@ -200,12 +199,11 @@ function resetTable() {
     exit();
 }
 
-// Permanently delete yung archived product (and resequence IDs)
+// Permanently delete archived product (with name in log)
 function permanentlyDeleteProduct() {
     global $connection;
     $id = (int)$_POST["delete_id"];
 
-    /* ===== Fetch product name BEFORE deletion para sa log ===== */
     $name = null;
     $stmtName = mysqli_prepare($connection, "SELECT name FROM products WHERE product_id = ? AND is_archived = 1");
     if ($stmtName) {
@@ -221,11 +219,9 @@ function permanentlyDeleteProduct() {
     $stmt = mysqli_prepare($connection, "DELETE FROM products WHERE product_id = ? AND is_archived = 1");
     mysqli_stmt_bind_param($stmt, "i", $id);
     if (mysqli_stmt_execute($stmt)) {
-        // Log deletion WITH product name (fallback to ID if name not found)
         $displayName = $name !== null ? $name : "ID $id";
         logActivity('delete', $id, "Permanently deleted product: $displayName");
 
-        // Resequence product IDs and update activity_logs to map to new IDs
         $ok = resequenceProducts();
         if ($ok) {
             $_SESSION["message"] = '<div class="alert alert-danger">Product permanently deleted. IDs resequenced.</div>';
@@ -247,43 +243,30 @@ function permanentlyDeleteProduct() {
 function resequenceProducts() {
     global $connection;
 
-    // Fetch all rows ordered by current product_id
     $rows = [];
     $q = mysqli_query($connection, "SELECT product_id, name, category, quantity, price, IFNULL(is_archived,0) AS is_archived FROM products ORDER BY product_id");
     if (!$q) return false;
+    while ($r = mysqli_fetch_assoc($q)) { $rows[] = $r; }
+    if (empty($rows)) return true;
 
-    while ($r = mysqli_fetch_assoc($q)) {
-        $rows[] = $r;
-    }
-
-    if (empty($rows)) return true; // nothing to do
-
-    // Start transaction
     if (!mysqli_begin_transaction($connection)) {
         error_log("Failed to start transaction for resequence: " . mysqli_error($connection));
         return false;
     }
 
     try {
-        // Create mapping array
         $mapping = [];
-
-        // Temporarily rename table to keep a backup (safer than raw truncate)
         $temp = 'products_backup_' . time();
         if (!mysqli_query($connection, "RENAME TABLE products TO $temp")) {
             throw new Exception('Rename products failed: ' . mysqli_error($connection));
         }
-
-        // Create a new empty products table using backup structure
         if (!mysqli_query($connection, "CREATE TABLE products LIKE $temp")) {
             throw new Exception('Create table like failed: ' . mysqli_error($connection));
         }
 
-        // Prepare insert (omit product_id so auto_increment assigns new ids)
         $ins = mysqli_prepare($connection, "INSERT INTO products (name, category, quantity, price, is_archived) VALUES (?, ?, ?, ?, ?)");
         if (!$ins) throw new Exception('Prepare insert failed: ' . mysqli_error($connection));
 
-        // Bind ONCE to variables (by reference), then assign in loop
         $bName = $bCategory = '';
         $bQty = 0;
         $bPrice = 0.0;
@@ -305,15 +288,11 @@ function resequenceProducts() {
         }
         mysqli_stmt_close($ins);
 
-        // Update activity_logs product_id references using mapping
         $upd = mysqli_prepare($connection, "UPDATE activity_logs SET product_id = ? WHERE product_id = ?");
         if (!$upd) throw new Exception('Prepare update logs failed: ' . mysqli_error($connection));
 
-        // Bind once, set values per iteration, then execute
-        $newIdVar = 0;
-        $oldIdVar = 0;
+        $newIdVar = 0; $oldIdVar = 0;
         mysqli_stmt_bind_param($upd, "ii", $newIdVar, $oldIdVar);
-
         foreach ($mapping as $oldId => $newId) {
             if ($oldId === $newId) continue;
             $newIdVar = (int)$newId;
@@ -324,20 +303,15 @@ function resequenceProducts() {
         }
         mysqli_stmt_close($upd);
 
-        // Drop backup table
         if (!mysqli_query($connection, "DROP TABLE IF EXISTS $temp")) {
-            // Not fatal, just warn
             error_log("Warning: failed to drop backup table $temp: " . mysqli_error($connection));
         }
 
-        // Commit
         mysqli_commit($connection);
         return true;
     } catch (Exception $ex) {
-        // Rollback and log
         mysqli_rollback($connection);
         error_log('Resequence failed: ' . $ex->getMessage());
-        // Attempt best-effort restore: If backup exists, rename back (may require manual intervention)
         return false;
     }
 }
@@ -351,9 +325,7 @@ function fetchProductName($id) {
         mysqli_stmt_bind_param($stmt, "i", $id);
         mysqli_stmt_execute($stmt);
         $res = mysqli_stmt_get_result($stmt);
-        if ($res && ($row = mysqli_fetch_assoc($res))) {
-            $name = $row['name'];
-        }
+        if ($res && ($row = mysqli_fetch_assoc($res))) { $name = $row['name']; }
         mysqli_stmt_close($stmt);
     }
     return $name;
@@ -362,7 +334,6 @@ function fetchProductName($id) {
 // Search product by ID (for update form)
 function searchProduct() {
     global $connection;
-
     $pid = isset($_POST["search-id"]) ? (int)$_POST["search-id"] : 0;
 
     $stmt = mysqli_prepare($connection, "SELECT product_id, name, category, quantity, price FROM products WHERE product_id = ?");
@@ -472,7 +443,7 @@ mysqli_stmt_close($stmt_sum);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="assets/css/theme.css?v=6" rel="stylesheet">
+    <link href="assets/css/theme.css?v=9" rel="stylesheet">
 </head>
 <body class="bg-light">
     <!-- Navbar: dito makikita yung logo, greeting sa user at mga links -->
@@ -484,7 +455,7 @@ mysqli_stmt_close($stmt_sum);
             </a>
             <div class="ms-auto d-flex align-items-center">
                 <!-- Greeting at role ng user -->
-                <span class="navbar-text me-3 text-white">
+                <span class="navbar-text me-3">
                     Hello, <?php echo htmlspecialchars($_SESSION['user']); ?>
                     <span class="badge bg-warning text-dark ms-2"><?php echo htmlspecialchars($role); ?></span>
                 </span>
@@ -519,6 +490,7 @@ mysqli_stmt_close($stmt_sum);
                     </div>
                 </div>
             </div>
+            <!-- Only admin or allowed users makikita yung Total Stock Value -->
             <?php if (($isAdmin || $showTotalToUser) && !$is_archived_view): ?>
             <div class="col-md-4">
                 <div class="card shadow-sm stat-card card-lift">
@@ -529,6 +501,7 @@ mysqli_stmt_close($stmt_sum);
                 </div>
             </div>
             <?php endif; ?>
+            <!-- Low stock count, only sa active products -->
             <?php if (!$is_archived_view): ?>
             <div class="col-md-4">
                 <div class="card shadow-sm stat-card card-lift">
@@ -541,10 +514,11 @@ mysqli_stmt_close($stmt_sum);
             <?php endif; ?>
         </div>
 
-        <!-- Filter Form -->
+        <!-- Filter Form: GET method para sa pagination support -->
         <div class="card shadow-sm card-lift mb-4">
             <div class="card-body">
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="GET" class="row g-2 align-items-end">
+                    <!-- Hidden input para manatili sa archived view kung nasa archived -->
                     <?php if($is_archived_view): ?><input type="hidden" name="view" value="archived"><?php endif; ?>
                     <div class="col-md-5">
                         <label class="form-label">Search (name/category)</label>
@@ -565,6 +539,7 @@ mysqli_stmt_close($stmt_sum);
             <!-- Left Column -->
             <div class="col-md-5">
                 <?php if ($isAdmin): ?>
+                <!-- Add Product Form -->
                 <div class="card shadow-sm card-lift mb-4">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Add Product</h5>
@@ -578,10 +553,12 @@ mysqli_stmt_close($stmt_sum);
                     </div>
                 </div>
 
+                <!-- Search by ID Form -->
                 <div class="card shadow-sm card-lift">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Search & Update (by ID)</h5>
                         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST" class="row g-2">
+                            <!-- Input field para sa product ID -->
                             <div class="col-8"><input type="number" name="search-id" class="form-control" placeholder="Ex: 3" required step="1" min="1"></div>
                             <div class="col-4"><button type="submit" name="search" class="btn btn-secondary w-100">Search</button></div>
                         </form>
@@ -597,6 +574,7 @@ mysqli_stmt_close($stmt_sum);
                 <div class="card shadow-sm card-lift">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mb-3">
+                            <!-- Table Title + Toggle Archived/Active + Reset -->
                             <h5 class="card-title mb-0"><?php echo $is_archived_view ? 'Archived Products' : 'Active Products'; ?></h5>
                             <div class="d-flex gap-2 align-items-center">
                                 <?php if ($isAdmin): ?>
@@ -613,8 +591,9 @@ mysqli_stmt_close($stmt_sum);
                             </div>
                         </div>
 
+                        <!-- Products Table -->
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle product-table">
                                 <thead>
                                     <tr>
                                         <th>ID</th><th>Name</th><th>Category</th><th>Qty</th><th>Price</th><th>Total</th>
@@ -623,6 +602,7 @@ mysqli_stmt_close($stmt_sum);
                                 </thead>
                                 <tbody>
                                 <?php
+                                // Query gamit prepared statements para sa security
                                 $selectQuery = "SELECT * FROM products WHERE $whereClause ORDER BY product_id DESC LIMIT ? OFFSET ?";
                                 $stmt_main = mysqli_prepare($connection, $selectQuery);
                                 $main_params = array_merge($params, [$records_per_page, $offset]);
@@ -637,16 +617,17 @@ mysqli_stmt_close($stmt_sum);
                                         $row_class = $isLow && !$is_archived_view ? 'row-low-stock' : 'row-normal';
 
                                         echo "<tr class='$row_class'>
-                                            <td class='text-white'>{$row['product_id']}</td>
-                                            <td class='text-white'>" . htmlspecialchars($row['name']) . "</td>
-                                            <td class='text-white'>" . htmlspecialchars($row['category']) . "</td>
-                                            <td class='text-white'>" . ($isLow && !$is_archived_view ? "<span class='qty-alert-badge text-white' title='Below threshold'>{$row['quantity']}</span>" : (int)$row['quantity']) . "</td>
-                                            <td class='text-white'>₱" . number_format($row['price'], 2) . "</td>
-                                            <td class='text-white'>₱" . number_format($row['quantity'] * $row['price'], 2) . "</td>";
+                                            <td>{$row['product_id']}</td>
+                                            <td>" . htmlspecialchars($row['name']) . "</td>
+                                            <td>" . htmlspecialchars($row['category']) . "</td>
+                                            <td>" . ($isLow && !$is_archived_view ? "<span class='qty-alert-badge' title='Below threshold'>{$row['quantity']}</span>" : (int)$row['quantity']) . "</td>
+                                            <td>₱" . number_format($row['price'], 2) . "</td>
+                                            <td>₱" . number_format($row['quantity'] * $row['price'], 2) . "</td>";
 
                                         if ($isAdmin) {
                                             echo '<td class="text-end">';
                                             if ($is_archived_view) {
+                                                // Archived view: Restore / Permanent Delete
                                                 echo '<div class="d-flex flex-column gap-1">
                                                         <form action="products.php?view=archived" method="POST">
                                                             <input type="hidden" name="restore_id" value="'.$row['product_id'].'">
@@ -658,6 +639,7 @@ mysqli_stmt_close($stmt_sum);
                                                         </form>
                                                     </div>';
                                             } else {
+                                                // Active view: Archive button
                                                 echo '<form action="products.php" method="POST" class="d-inline" onsubmit="return confirm(\'Archive this product?\');">
                                                         <input type="hidden" name="archive_id" value="'.$row['product_id'].'">
                                                         <button type="submit" name="archive" class="btn btn-sm btn-archive">Archive</button>
@@ -668,13 +650,14 @@ mysqli_stmt_close($stmt_sum);
                                         echo '</tr>';
                                     }
                                 } else {
-                                    echo '<tr><td colspan="7" class="text-center text-white" style="background-color: #151b24;">No products found.</td></tr>';
+                                    echo '<tr><td colspan="7" class="text-center" style="background: var(--surface); color: var(--ink);">No products found.</td></tr>';
                                 }
                                 ?>
                                 </tbody>
                             </table>
                         </div>
 
+                        <!-- Pagination -->
                         <?php if ($total_pages > 1):
                             $filter_query_string = http_build_query(['q' => $searchName, 'cat' => $searchCategory, 'view' => $view_mode]);
                         ?>
@@ -708,6 +691,7 @@ mysqli_stmt_close($stmt_sum);
     </button>
 
 </body>
+<!-- JS na mga ginamit -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/theme-toggle.js?v=3"></script>
 <script src="assets/js/ui-enhance.js"></script>

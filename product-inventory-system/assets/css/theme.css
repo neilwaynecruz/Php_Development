@@ -1130,3 +1130,43 @@ label {
 .users-table td {
   color: inherit;
 }
+
+/* ===== Product table adaptive fonts (moved from products.php inline <style>) ===== */
+.product-table thead th {
+  color: var(--label);
+  background: var(--surface-2);
+  border-bottom: 2px solid var(--border);
+  font-weight: 700;
+}
+:root[data-theme="dark"] .product-table thead th {
+  background: #121a28;
+  color: var(--label);
+  border-bottom-color: #2a3649;
+}
+.product-table tbody td {
+  color: var(--ink);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+/* keep low-stock tint but ensure readable text */
+.product-table tbody tr.row-low-stock td {
+  color: var(--ink);
+}
+:root[data-theme="dark"] .product-table tbody tr.row-low-stock td {
+  color: var(--ink);
+}
+/* hover */
+.product-table tbody tr:hover td {
+  background: var(--surface-2);
+}
+:root[data-theme="dark"] .product-table tbody tr:hover td {
+  background: #121a28;
+}
+/* qty badge legibility on both themes */
+.qty-alert-badge {
+  color: #1f2937;
+  font-weight: 700;
+}
+:root[data-theme="dark"] .qty-alert-badge {
+  color: #0f141b;
+}

@@ -1,4 +1,4 @@
-# 🔷 PRISM Inventory System (Azure Essence Theme)
+# 🔷 PRISM - Inventory Product System
 
 Modern minimalist inventory system for Users and Admin — may light/dark mode, responsive UI, interactive tables, alerts, at dashboard. Built as a clean HTML/CSS/JS demo (no backend required), pero ready for integration sa PHP/Node kung gusto mong i-expand.
 
@@ -15,6 +15,7 @@ Modern minimalist inventory system for Users and Admin — may light/dark mode, 
 
 - [Project Overview](#project-overview)
 - [Features](#features)
+- [Github Installation & Setup](#github-installation--setup)
 - [Installation & Setup](#installation--setup)
 - [Demo / Usage](#demo--usage)
 - [File Structure](#file-structure)
@@ -48,19 +49,41 @@ Main goal: gawing simple at mabilis ang inventory management, improve user exper
 
 ---
 
+## Github Installation & Setup
+
+You can clone only the **Product Inventory System** folder from this repository using **Sparse Checkout** (recommended) or **SVN**.
+
+### Option 1: Git Sparse Checkout (Recommended)
+
+````bash
+# 1. Clone the main repo without checking out all files
+git clone --no-checkout https://github.com/neilwaynecruz/Php_Development.git
+cd Php_Development
+
+# 2. Enable sparse checkout
+git sparse-checkout init --cone
+
+# 3. Checkout only the product-inventory-system folder
+git sparse-checkout set product-inventory-system
+
+# 4. Checkout the main branch
+git checkout main
+
+cd product-inventory-system
+
+# Option 2: Using SVN (Simpler)
+
+svn export https://github.com/neilwaynecruz/Php_Development/trunk/product-inventory-system
+
+---
+
 ## Installation & Setup
 
-1. Clone the repository
+1. Open the app
 
-   ```bash
-   git clone https://github.com/yourusername/prism-inventory.git
-   ```
+   - Buksan ang `index.html` sa browser para i-run ang system (static demo) if gusto ng actual website, login.php.
 
-2. Open the app
-
-   - Buksan ang `index.html` sa browser para i-run ang system (static demo).
-
-3. Siguraduhing naka-link ang core CSS/JS files
+2. Siguraduhing naka-link ang core CSS/JS files
 
    - `theme.css` → styling, colors, at dark/light mode
    - `ui-enhance.js` → alerts, icons, animations
@@ -72,9 +95,9 @@ Main goal: gawing simple at mabilis ang inventory management, improve user exper
    <link rel="stylesheet" href="theme.css" />
    <script defer src="ui-enhance.js"></script>
    <script defer src="theme-toggle.js"></script>
-   ```
+````
 
-4. Server? Optional
+3. Server? Optional
    - Walang server setup needed kung local HTML demo lang.
    - For a backend version, integrate with PHP / Node.js or your preferred server.
 
