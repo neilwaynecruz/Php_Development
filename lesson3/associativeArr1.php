@@ -26,11 +26,17 @@
 
     $groceries = array("Fruits" => $fruits, "Meats" => $meats);
 
-    foreach($groceries as $fruits => $v){
-        echo "<b>{$fruits}:</b><br>";
-        foreach($meats as $i)
-            echo "{$i}<br>";
-        echo "<br>";
+    foreach($groceries as $key => $values){
+        if($key === "Fruits"):
+            echo "Fruits: <br>"; 
+            foreach($values as $value){
+                echo "<b>$value</b>" . "<br>";
+            } else:
+                echo "<br>Meats: <br>"; 
+            foreach($values as $value){
+                echo "<b>$value</b>" . "<br>";
+            }
+        endif;
     }
 
     ?>
