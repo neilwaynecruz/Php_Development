@@ -11,7 +11,6 @@ Route::get('/user', function () {
     return view('user');
 });
 
-
 Route::get('/product', function () {
     return view('product');
 });

@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PUP Schedule Encoding</title>
-    
-    
+
+
     <link rel="stylesheet" href="{{ asset('css/pup-theme.css') }}">
 </head>
 <body>
@@ -17,7 +17,7 @@
         </div>
 
         <div class="card-body">
-            
+
             <!-- Success Message Check -->
             @if(session('success'))
                 <div class="alert-success">
@@ -27,7 +27,7 @@
 
             <form method="post" action="{{ url('/save-schedule') }}">
                 @csrf
-                
+
                 <div class="form-group">
                     <label>Subject Code</label>
                     <input type="text" name="subjcode" placeholder="e.g., COMP 20133" required>
