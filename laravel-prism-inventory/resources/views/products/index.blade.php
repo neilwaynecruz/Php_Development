@@ -114,12 +114,12 @@
       @csrf
       <div class="mb-2">
         <label class="form-label">Name</label>
-        <input type="text" name="pName" class="form-control" required>
+        <input type="text" name="pName" class="form-control" placeholder="Ballpen/Marker" required>
       </div>
 
       <div class="mb-2">
         <label class="form-label">Category</label>
-        <input type="text" name="pCategory" class="form-control" required>
+        <input type="text" name="pCategory" class="form-control" placeholder="School Supplies, Electronics, etc." required>
       </div>
 
       <div class="mb-2">
@@ -134,12 +134,12 @@
 
       <div class="mb-2">
         <label class="form-label">Quantity</label>
-        <input type="number" name="pQty" class="form-control" min="0" required>
+        <input type="number" name="pQty" class="form-control" min="0" placeholder="e.g. 300" required>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Price</label>
-        <input type="number" name="pPrice" class="form-control" min="0" step="0.01" required>
+        <input type="number" name="pPrice" class="form-control" min="0" step="0.01" placeholder="e.g. 9.99" required>
       </div>
 
       <!-- If you have image upload for Add, keep its field here -->
