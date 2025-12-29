@@ -84,11 +84,14 @@
       modalEl.addEventListener('show.bs.modal', (ev) => {
         const btn = ev.relatedTarget;
         if (!btn) return;
+
         const pid   = btn.getAttribute('data-id');
         const name  = btn.getAttribute('data-name') || '';
         const cat   = btn.getAttribute('data-category') || '';
         const qty   = btn.getAttribute('data-qty') || '0';
         const price = btn.getAttribute('data-price') || '0.00';
+        const sku   = btn.getAttribute('data-sku') || '';
+        const bc    = btn.getAttribute('data-barcode') || '';
         const imgUrl = btn.getAttribute('data-image-url') || '';
 
         const pidHiddenEl   = document.getElementById('edit_pid');
@@ -97,6 +100,8 @@
         const catEl         = document.getElementById('edit_category');
         const qtyEl         = document.getElementById('edit_quantity');
         const priceEl       = document.getElementById('edit_price');
+        const skuEl         = document.getElementById('edit_sku');
+        const bcEl          = document.getElementById('edit_barcode');
         const imgWrapperEl  = document.getElementById('edit_current_image_wrapper');
         const imgPreviewEl  = document.getElementById('edit_current_image');
         const removeChkEl   = document.getElementById('remove_image');
@@ -107,10 +112,10 @@
         if (catEl)        catEl.value = cat;
         if (qtyEl)        qtyEl.value = qty;
         if (priceEl)      priceEl.value = price;
+        if (skuEl)        skuEl.value = sku;
+        if (bcEl)         bcEl.value  = bc;
 
-        if (removeChkEl) {
-          removeChkEl.checked = false;
-        }
+        if (removeChkEl) removeChkEl.checked = false;
 
         if (imgWrapperEl && imgPreviewEl) {
           if (imgUrl) {

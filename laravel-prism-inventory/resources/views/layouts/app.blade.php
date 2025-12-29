@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="{{ asset('assets/css/theme.css') }}?v=1" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body >
   @yield('nav')
 
   <div class="container py-4">

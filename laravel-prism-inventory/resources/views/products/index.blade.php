@@ -12,21 +12,25 @@
       </span>
     </a>
 
-    <div class="ms-auto d-flex align-items-center gap-2">
-      <span class="navbar-text">
-        Hello, {{ e(session('user')) }}
-        <span class="badge bg-warning text-dark ms-1">{{ e(session('role', 'user')) }}</span>
-      </span>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <span class="navbar-text">
+          Hello, {{ e(session('user')) }}
+          <span class="badge bg-warning text-dark ms-1">{{ e(session('role', 'user')) }}</span>
+        </span>
 
-      @if ($isAdmin)
-        <a href="{{ route('users.index') }}" class="btn btn-outline-light btn-sm">Users</a>
-        <a href="{{ route('logs.index') }}" class="btn btn-outline-light btn-sm">Logs</a>
-        <!-- NEW: Settings link for admins -->
-        <a href="{{ route('settings.index') }}" class="btn btn-outline-light btn-sm">Settings</a>
-      @endif
+        {{-- User + Admin: My Requests --}}
+        <a href="{{ route('requisitions.my.index') }}" class="btn btn-outline-light btn-sm">My Requests</a>
 
-      <a href="{{ route('account.form') }}" class="btn btn-outline-light btn-sm">Account</a>
-      <a href="{{ route('logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
+        {{-- Admin-only links --}}
+        @if ($isAdmin)
+          <a href="{{ route('requisitions.admin.index') }}" class="btn btn-outline-light btn-sm">Requisitions</a>
+          <a href="{{ route('users.index') }}" class="btn btn-outline-light btn-sm">Users</a>
+          <a href="{{ route('logs.index') }}" class="btn btn-outline-light btn-sm">Logs</a>
+          <a href="{{ route('settings.index') }}" class="btn btn-outline-light btn-sm">Settings</a>
+        @endif
+
+        <a href="{{ route('account.form') }}" class="btn btn-outline-light btn-sm">Account</a>
+        <a href="{{ route('logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
     </div>
   </div>
 </nav>
@@ -78,7 +82,7 @@
 
       <div class="col-md-5">
         <label class="form-label">Search</label>
-        <input type="text" name="q" class="form-control" value="{{ $q }}" placeholder="Name or category">
+        <input type="text" name="q" class="form-control" value="{{ $q }}" placeholder="Name, category, or SKU">
       </div>
 
       <div class="col-md-5">
@@ -101,13 +105,12 @@
 
 <!-- LEFT COLUMN -->
 <div class="col-md-5">
-
 @if ($isAdmin)
 <div class="card shadow-sm mb-4">
   <div class="card-body">
     <h5 class="card-title mb-3">Add Product</h5>
 
-    <form method="POST" action="{{ route('products.create') }}" class="js-ajax-form">
+    <form method="POST" action="{{ route('products.create') }}" class="js-ajax-form" enctype="multipart/form-data">
       @csrf
       <div class="mb-2">
         <label class="form-label">Name</label>
@@ -120,6 +123,16 @@
       </div>
 
       <div class="mb-2">
+        <label class="form-label">SKU (optional)</label>
+        <input type="text" name="pSku" class="form-control" maxlength="64" placeholder="e.g. KB-001">
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label">Barcode (optional)</label>
+        <input type="text" name="pBarcode" class="form-control" maxlength="128" placeholder="e.g. 1234567890123">
+      </div>
+
+      <div class="mb-2">
         <label class="form-label">Quantity</label>
         <input type="number" name="pQty" class="form-control" min="0" required>
       </div>
@@ -129,12 +142,13 @@
         <input type="number" name="pPrice" class="form-control" min="0" step="0.01" required>
       </div>
 
+      <!-- If you have image upload for Add, keep its field here -->
+
       <button class="btn btn-primary w-100">Add Product</button>
     </form>
   </div>
 </div>
 @endif
-
 </div>
 
 <!-- RIGHT COLUMN -->
@@ -142,14 +156,11 @@
 <div class="card shadow-sm">
 <div class="card-body">
 
-<!-- TABLE TOOLBAR -->
 @php
-  // Build a toggle URL that preserves any existing q/cat parameters but flips the view
   $toggleViewUrl = request()->fullUrlWithQuery([
     'view' => $is_archived_view ? 'active' : 'archived'
   ]);
 
-  // Build export URL preserving filters
   $productsExportUrl = route('products.exportCsv') . '?' . http_build_query([
     'q'    => $q,
     'cat'  => $cat,
@@ -157,9 +168,9 @@
   ]);
 @endphp
 
+<!-- TABLE TOOLBAR -->
 <div class="table-toolbar mb-3">
   <div class="row g-2 align-items-center">
-    <!-- Left: server actions (Reset, toggle view) -->
     <div class="col-md-5 d-flex align-items-center gap-2 flex-wrap">
       @if ($isAdmin)
         <form method="POST" action="{{ route('products.reset') }}" class="js-ajax-form"
@@ -176,7 +187,6 @@
       @endif
     </div>
 
-    <!-- Right: toolbar buttons (Reset View, Export, Columns) -->
     <div class="col-md-7 d-flex justify-content-end align-items-center gap-2 flex-wrap">
       <button id="resetViewBtn" class="btn btn-outline-secondary btn-sm" type="button">Reset View</button>
 
@@ -191,6 +201,12 @@
         <div class="dropdown-menu dropdown-menu-end p-2 columns-menu bg-white text-dark border" style="min-width: 240px;">
           <label class="form-check d-flex align-items-center text-dark">
             <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="id"> <span class="form-check-label">ID</span>
+          </label>
+          <label class="form-check d-flex align-items-center text-dark">
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="sku"> <span class="form-check-label">SKU</span>
+          </label>
+          <label class="form-check d-flex align-items-center text-dark">
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="barcode"> <span class="form-check-label">Barcode</span>
           </label>
           <label class="form-check d-flex align-items-center text-dark">
             <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="name"> <span class="form-check-label">Name</span>
@@ -217,7 +233,7 @@
       </div>
     </div>
 
-    <!-- Full-width row: Quick search -->
+    <!-- Quick search -->
     <div class="col-12 mt-3">
       <div class="input-group input-group-sm">
         <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -234,18 +250,20 @@
 <div class="table-responsive">
 <table class="table table-hover align-middle product-table" id="productTable">
   <thead>
-    <tr>
-      <th class="sortable" data-col="id">ID</th>
-      <th style="width:8%;">Img</th>
-      <th class="sortable" data-col="name">Name</th>
-      <th class="sortable" data-col="category">Category</th>
-      <th class="sortable" data-col="qty">Qty</th>
-      <th class="sortable" data-col="price">Price</th>
-      <th class="sortable" data-col="total">Total</th>
-      @if ($isAdmin)
-        <th data-col="action" class="text-end">Action</th>
-      @endif
-    </tr>
+  <tr>
+    <th class="sortable" data-col="id">ID</th>
+    <th style="width:8%;">Img</th>
+    <th class="sortable" data-col="sku">SKU</th>
+    <th class="sortable" data-col="barcode">Barcode</th>
+    <th class="sortable" data-col="name">Name</th>
+    <th class="sortable" data-col="category">Category</th>
+    <th class="sortable" data-col="qty">Qty</th>
+    <th class="sortable" data-col="price">Price</th>
+    <th class="sortable" data-col="total">Total</th>
+    @if ($isAdmin)
+      <th data-col="action" class="text-end">Action</th>
+    @endif
+  </tr>
   </thead>
   <tbody>
     @foreach ($rows as $row)
@@ -271,6 +289,9 @@
             <span class="text-muted small">–</span>
           @endif
         </td>
+
+        <td data-col="sku">{{ $row->sku ?? '—' }}</td>
+        <td data-col="barcode">{{ $row->barcode ?? '—' }}</td>
 
         <td data-col="name">{{ e($row->name) }}</td>
         <td data-col="category">{{ e($row->category) }}</td>
@@ -309,6 +330,8 @@
                         data-id="{{ (int) $row->product_id }}"
                         data-name="{{ e($row->name) }}"
                         data-category="{{ e($row->category) }}"
+                        data-sku="{{ e($row->sku ?? '') }}"
+                        data-barcode="{{ e($row->barcode ?? '') }}"
                         data-qty="{{ $qtyVal }}"
                         data-price="{{ number_format((float) $row->price, 2, '.', '') }}"
                         data-image-url="{{ $imgUrl }}">
@@ -358,6 +381,14 @@
           <div class="mb-3">
             <label class="form-label">Category</label>
             <input type="text" name="category" id="edit_category" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">SKU (optional)</label>
+            <input type="text" name="sku" id="edit_sku" class="form-control" maxlength="64">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Barcode (optional)</label>
+            <input type="text" name="barcode" id="edit_barcode" class="form-control" maxlength="128">
           </div>
           <div class="mb-3">
             <label class="form-label">Quantity</label>

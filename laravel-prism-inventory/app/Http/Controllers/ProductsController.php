@@ -40,7 +40,7 @@ class ProductsController extends Controller
             ? ($incomingView ?? $saved['view'] ?? 'active')
             : 'active';
 
-        // Persist the composed filters whenever any of q/cat/view are present
+        // Persist filters whenever any of q/cat/view are present
         if ($request->query->has('q') || $request->query->has('cat') || $request->query->has('view')) {
             session([
                 $filterKey => [
@@ -64,8 +64,17 @@ class ProductsController extends Controller
         $where = $is_archived_view ? "is_archived = 1" : "is_archived = 0";
         $params = [];
 
-        if ($q !== '') { $where .= " AND (name LIKE ? OR category LIKE ?)"; $params[] = "%$q%"; $params[] = "%$q%"; }
-        if ($cat !== '') { $where .= " AND category LIKE ?"; $params[] = "%$cat%"; }
+        if ($q !== '') {
+            // SEARCH also in SKU
+            $where .= " AND (name LIKE ? OR category LIKE ? OR sku LIKE ?)";
+            $params[] = "%$q%";
+            $params[] = "%$q%";
+            $params[] = "%$q%";
+        }
+        if ($cat !== '') {
+            $where .= " AND category LIKE ?";
+            $params[] = "%$cat%";
+        }
 
         $sumSql = "SELECT COUNT(*) AS total_products,
                           COALESCE(SUM(quantity * price), 0) AS total_value,
@@ -80,7 +89,6 @@ class ProductsController extends Controller
         $current_page = min($current_page, $total_pages);
         $offset = ($current_page - 1) * $records_per_page;
 
-        // Include image_path in select (we use * but column must exist)
         $listSql = "SELECT * FROM products WHERE $where ORDER BY product_id DESC LIMIT ? OFFSET ?";
         $rows = DB::select($listSql, array_merge($params, [$records_per_page, $offset]));
 
@@ -88,10 +96,16 @@ class ProductsController extends Controller
         $searchResult = null;
         $searchId = session()->getOldInput('search-id');
         if (is_numeric($searchId) && (int)$searchId > 0) {
-            $searchRow = DB::selectOne("SELECT product_id, name, category, quantity, price, image_path FROM products WHERE product_id = ?", [(int)$searchId]);
+            $searchRow = DB::selectOne(
+                "SELECT product_id, sku, barcode, name, category, quantity, price, image_path
+                 FROM products WHERE product_id = ?",
+                [(int)$searchId]
+            );
             if ($searchRow) {
                 $searchResult = [
                     'product_id' => (int) $searchRow->product_id,
+                    'sku'        => (string) ($searchRow->sku ?? ''),
+                    'barcode'    => (string) ($searchRow->barcode ?? ''),
                     'name'       => (string) $searchRow->name,
                     'category'   => (string) $searchRow->category,
                     'quantity'   => (int) $searchRow->quantity,
@@ -116,12 +130,15 @@ class ProductsController extends Controller
             session()->flash('message', $msg); return back();
         }
 
-        $name = trim((string)$request->input('pName',''));
+        $name     = trim((string)$request->input('pName',''));
         $category = trim((string)$request->input('pCategory',''));
-        $qtyRaw = $request->input('pQty');
-        $qty = is_numeric($qtyRaw) ? (int)$qtyRaw : null;
+        $qtyRaw   = $request->input('pQty');
+        $qty      = is_numeric($qtyRaw) ? (int)$qtyRaw : null;
         $priceRaw = $request->input('pPrice', null);
-        $price = is_numeric($priceRaw) ? (float)$priceRaw : null;
+        $price    = is_numeric($priceRaw) ? (float)$priceRaw : null;
+
+        $sku      = trim((string) $request->input('pSku', ''));
+        $barcode  = trim((string) $request->input('pBarcode', ''));
 
         $errors = [];
         if ($name === '') $errors[] = "Product name is required.";
@@ -129,13 +146,22 @@ class ProductsController extends Controller
         if ($qty === null || !is_numeric($qty) || (int)$qty < 0) $errors[] = "Quantity must be a non-negative integer.";
         if ($price === null || !is_numeric($price) || (float)$price < 0) $errors[] = "Price must be a non-negative number.";
 
-        // Image validation (optional)
+        // Enforce unique SKU if provided
+        if ($sku !== '') {
+            $existingSku = DB::selectOne("SELECT product_id FROM products WHERE sku = ?", [$sku]);
+            if ($existingSku) {
+                $errors[] = "SKU is already used by product ID ".(int)$existingSku->product_id.".";
+            }
+        }
+
+        // Image validation (optional – keep whatever you already had)
+        $imagePath = null;
         if ($request->hasFile('pImage')) {
             if (!$request->file('pImage')->isValid()) {
                 $errors[] = "Uploaded image is invalid.";
             } else {
                 $request->validate([
-                    'pImage' => ['image','max:2048'], // 2MB, jpg/png/webp etc.
+                    'pImage' => ['image','max:2048'],
                 ]);
             }
         }
@@ -146,19 +172,30 @@ class ProductsController extends Controller
             session()->flash('message', $msg); return back()->withInput();
         }
 
-        $imagePath = null;
         if ($request->hasFile('pImage')) {
             $stored = $request->file('pImage')->store('products', 'public');
-            $imagePath = $stored; // e.g., products/abc.jpg
+            $imagePath = $stored;
         }
 
         DB::insert(
-            "INSERT INTO products (name, category, quantity, price, image_path) VALUES (?, ?, ?, ?, ?)",
-            [$name, $category, (int)$qty, (float)$price, $imagePath]
+            "INSERT INTO products (sku, barcode, name, category, quantity, price, image_path)
+             VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [
+                $sku !== '' ? $sku : null,
+                $barcode !== '' ? $barcode : null,
+                $name,
+                $category,
+                (int)$qty,
+                (float)$price,
+                $imagePath
+            ]
         );
         $newId = DB::getPdo()->lastInsertId();
 
         $logDetails = "Added: $name";
+        if ($sku !== '') {
+            $logDetails .= " (SKU: $sku)";
+        }
         if ($imagePath) {
             $logDetails .= " (with image)";
         }
@@ -177,11 +214,14 @@ class ProductsController extends Controller
             session()->flash('message', $msg); return back();
         }
 
-        $id = (int) $request->input('pid');
-        $name = trim((string)$request->input('name',''));
+        $id       = (int) $request->input('pid');
+        $name     = trim((string)$request->input('name',''));
         $category = trim((string)$request->input('category',''));
-        $qty = $request->input('quantity');
-        $price = $request->input('price');
+        $qty      = $request->input('quantity');
+        $price    = $request->input('price');
+
+        $sku      = trim((string) $request->input('sku', ''));
+        $barcode  = trim((string) $request->input('barcode', ''));
 
         $errors = [];
         if ($name === '') $errors[] = "Product name is required.";
@@ -189,7 +229,13 @@ class ProductsController extends Controller
         if (!is_numeric($qty) || (int)$qty < 0) $errors[] = "Quantity must be a non-negative integer.";
         if (!is_numeric($price) || (float)$price < 0) $errors[] = "Price must be a non-negative number.";
 
-        // Image validation (optional)
+        if ($sku !== '') {
+            $existingSku = DB::selectOne("SELECT product_id FROM products WHERE sku = ? AND product_id <> ?", [$sku, $id]);
+            if ($existingSku) {
+                $errors[] = "SKU is already used by product ID ".(int)$existingSku->product_id.".";
+            }
+        }
+
         if ($request->hasFile('image')) {
             if (!$request->file('image')->isValid()) {
                 $errors[] = "Uploaded image is invalid.";
@@ -206,7 +252,7 @@ class ProductsController extends Controller
             session()->flash('message', $msg); return back()->withInput();
         }
 
-        // Get existing image_path so we can optionally delete/replace
+        // existing image
         $oldRow = DB::selectOne("SELECT image_path FROM products WHERE product_id = ?", [$id]);
         $oldImage = $oldRow->image_path ?? null;
         $newImagePath = $oldImage;
@@ -214,7 +260,6 @@ class ProductsController extends Controller
         $imageUpdated = false;
         $imageRemoved = false;
 
-        // If user wants to remove image
         if ($request->boolean('remove_image') && !$request->hasFile('image')) {
             if ($oldImage && Storage::disk('public')->exists($oldImage)) {
                 Storage::disk('public')->delete($oldImage);
@@ -223,7 +268,6 @@ class ProductsController extends Controller
             $imageRemoved = true;
         }
 
-        // If user uploads a new image, it overrides both old and removal
         if ($request->hasFile('image')) {
             if ($oldImage && Storage::disk('public')->exists($oldImage)) {
                 Storage::disk('public')->delete($oldImage);
@@ -231,15 +275,29 @@ class ProductsController extends Controller
             $stored = $request->file('image')->store('products', 'public');
             $newImagePath = $stored;
             $imageUpdated = true;
-            $imageRemoved = false; // replaced rather than removed
+            $imageRemoved = false;
         }
 
         DB::update(
-            "UPDATE products SET name = ?, category = ?, quantity = ?, price = ?, image_path = ? WHERE product_id = ?",
-            [$name, $category, (int)$qty, (float)$price, $newImagePath, $id]
+            "UPDATE products
+             SET sku = ?, barcode = ?, name = ?, category = ?, quantity = ?, price = ?, image_path = ?
+             WHERE product_id = ?",
+            [
+                $sku !== '' ? $sku : null,
+                $barcode !== '' ? $barcode : null,
+                $name,
+                $category,
+                (int)$qty,
+                (float)$price,
+                $newImagePath,
+                $id
+            ]
         );
 
         $logDetails = "Updated: $name";
+        if ($sku !== '') {
+            $logDetails .= " (SKU: $sku)";
+        }
         if ($imageUpdated) {
             $logDetails .= " (updated image)";
         } elseif ($imageRemoved) {
@@ -288,7 +346,6 @@ class ProductsController extends Controller
     {
         $id = (int) $request->input('delete_id');
 
-        // Delete associated image file (optional but tidy)
         $imgRow = DB::selectOne("SELECT image_path FROM products WHERE product_id = ? AND is_archived = 1", [$id]);
         if ($imgRow && $imgRow->image_path && Storage::disk('public')->exists($imgRow->image_path)) {
             Storage::disk('public')->delete($imgRow->image_path);
@@ -331,7 +388,7 @@ class ProductsController extends Controller
     private function resequenceProducts(): bool
     {
         try {
-            $rows = DB::select("SELECT product_id, name, category, quantity, price, IFNULL(is_archived,0) AS is_archived, image_path FROM products ORDER BY product_id");
+            $rows = DB::select("SELECT product_id, sku, barcode, name, category, quantity, price, IFNULL(is_archived,0) AS is_archived, image_path FROM products ORDER BY product_id");
             if (!$rows) return true;
 
             $temp = 'products_backup_' . time();
@@ -339,8 +396,15 @@ class ProductsController extends Controller
             DB::statement("CREATE TABLE products LIKE $temp");
 
             foreach ($rows as $r) {
-                DB::insert("INSERT INTO products (name, category, quantity, price, is_archived, image_path) VALUES (?, ?, ?, ?, ?, ?)", [
-                    $r->name, $r->category, (int)$r->quantity, (float)$r->price, (int)$r->is_archived, $r->image_path,
+                DB::insert("INSERT INTO products (sku, barcode, name, category, quantity, price, is_archived, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
+                    $r->sku,
+                    $r->barcode,
+                    $r->name,
+                    $r->category,
+                    (int)$r->quantity,
+                    (float)$r->price,
+                    (int)$r->is_archived,
+                    $r->image_path,
                 ]);
                 $newId = DB::getPdo()->lastInsertId();
                 if ((int)$r->product_id !== (int)$newId) {
@@ -369,10 +433,18 @@ class ProductsController extends Controller
 
         $where = $is_archived_view ? "is_archived = 1" : "is_archived = 0";
         $params = [];
-        if ($q !== '')  { $where .= " AND (name LIKE ? OR category LIKE ?)"; $params[] = "%$q%"; $params[] = "%$q%"; }
-        if ($cat !== ''){ $where .= " AND category LIKE ?"; $params[] = "%$cat%"; }
+        if ($q !== '')  {
+            $where .= " AND (name LIKE ? OR category LIKE ? OR sku LIKE ?)";
+            $params[] = "%$q%";
+            $params[] = "%$q%";
+            $params[] = "%$q%";
+        }
+        if ($cat !== ''){
+            $where .= " AND category LIKE ?";
+            $params[] = "%$cat%";
+        }
 
-        $sql = "SELECT product_id, name, category, quantity, price, IFNULL(is_archived,0) AS is_archived
+        $sql = "SELECT product_id, sku, barcode, name, category, quantity, price, IFNULL(is_archived,0) AS is_archived
                 FROM products
                 WHERE $where
                 ORDER BY product_id DESC";
@@ -382,10 +454,12 @@ class ProductsController extends Controller
         return response()->streamDownload(function () use ($sql, $params) {
             $out = fopen('php://output', 'w');
 
-            fputcsv($out, ['ID', 'Name', 'Category', 'Qty', 'Price', 'Total', 'Archived']);
+            fputcsv($out, ['ID', 'SKU', 'Barcode', 'Name', 'Category', 'Qty', 'Price', 'Total', 'Archived']);
 
             foreach (DB::cursor($sql, $params) as $r) {
                 $id   = (int) $r->product_id;
+                $sku  = (string) ($r->sku ?? '');
+                $bar  = (string) ($r->barcode ?? '');
                 $name = (string) $r->name;
                 $cat  = (string) $r->category;
                 $qty  = (int) $r->quantity;
@@ -393,7 +467,17 @@ class ProductsController extends Controller
                 $arch = ((int) $r->is_archived) ? 'yes' : 'no';
                 $total= $qty * $price;
 
-                fputcsv($out, [$id, $name, $cat, $qty, number_format($price, 2, '.', ''), number_format($total, 2, '.', ''), $arch]);
+                fputcsv($out, [
+                    $id,
+                    $sku,
+                    $bar,
+                    $name,
+                    $cat,
+                    $qty,
+                    number_format($price, 2, '.', ''),
+                    number_format($total, 2, '.', ''),
+                    $arch
+                ]);
             }
 
             fclose($out);

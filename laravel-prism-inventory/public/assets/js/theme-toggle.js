@@ -37,24 +37,25 @@
     }
   }
 
-  // Apply yung theme sa page
-  function apply(theme) {
-    if (theme === "dark") {
-      root.setAttribute("data-theme", "dark"); // para sa CSS [data-theme="dark"]
-      document.documentElement.style.colorScheme = "dark"; // native dark mode support
-    } else {
-      root.removeAttribute("data-theme");
-      document.documentElement.style.colorScheme = "light";
-    }
+    // Apply yung theme sa page
+    function apply(theme) {
+      // normalize value
+      if (theme !== "dark" && theme !== "light") {
+        theme = "light";
+      }
 
-    // Update toggle button state
-    const btn = document.getElementById(toggleBtnId);
-    if (btn) {
-      btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
-      btn.dataset.theme = theme; // gagamitin ng CSS para sa icon swap
+      // ALWAYS set data-theme on <html>
+      root.setAttribute("data-theme", theme);
+      document.documentElement.style.colorScheme = theme; // native dark/light
+
+      // Update toggle button state
+      const btn = document.getElementById(toggleBtnId);
+      if (btn) {
+        btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+        btn.dataset.theme = theme; // gagamitin ng CSS para sa icon swap
+      }
+      updateLabel(theme); // update label text at aria attributes
     }
-    updateLabel(theme); // update label text at aria attributes
-  }
 
   // Update yung button label at accessibility attributes
   function updateLabel(theme) {

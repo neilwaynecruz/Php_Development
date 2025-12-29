@@ -1,57 +1,47 @@
 /* ==========================================================
    Base Design Notes
-   — Ang style ay modern minimalist para malinis at aestehtic tingnan.
-   — Balanced yung contrast para easy basahin, kahit light or dark mode pa.
+   — Modern, minimalist, light/dark aware, using design tokens.
    ========================================================== */
 
 /* =========================
-   Design Tokens (Para sa Light Mode)
-   — Dito nakalagay lahat ng "ingredients" ng design natin.
-     Isipin mo to na parang global settings para sa colors, fonts,
-     shadows, at pagka-curve ng corners (border-radius) pag naka-light mode.
+   Design Tokens – Light Mode
    ========================= */
 :root {
-  /* yung root is ang pinaka main element */
   color-scheme: light;
 
-  /* Neutrals – Mga general na kulay para sa background at text. */
-  --bg: #f0f2f5; /* Kulay ng pinaka-background ng page */
-  --surface: rgba(
-    255,
-    255,
-    255,
-    0.75
-  ); /* Kulay para sa mga elements na nasa ibabaw, like cards at navbar */
-  --surface-2: #e9eff7; /* Medyo darker na surface, para sa hover effects or selected items */
-  --border: #dee2e6; /* Kulay ng mga linya or borders */
-  --ink: #343a40; /* Kulay ng main text */
-  --ink-soft: #6c757d; /* Mas light na text, para sa mga secondary info */
-  --placeholder: #8b949e; /* Kulay ng text sa loob ng input fields bago ka mag-type */
+  /* Neutrals */
+  --bg: #f0f2f5;
+  --surface: rgba(255, 255, 255, 0.75);
+  --surface-2: #e9eff7;
+  --border: #dee2e6;
+  --ink: #343a40;
+  --ink-soft: #6c757d;
+  --placeholder: #8b949e;
 
-  /* Labels – Para sa mga name ng form fields at table headers. */
+  /* Labels */
   --label: #343a40;
 
-  /* Primary (Ito yung main color para sa mga button at links) */
-  --primary: #2b3035; /* Default na kulay ng button */
-  --primary-hover: #1c1f22; /* Kulay ng button pag na-hover */
-  --primary-text: #ffffff; /* Kulay ng text sa loob ng primary button */
+  /* Primary */
+  --primary: #2b3035;
+  --primary-hover: #1c1f22;
+  --primary-text: #ffffff;
 
-  /* Link colors (Para consistent sa kulay ng brand) */
+  /* Links */
   --link-color: #0a58ca;
-  --link-rgb: 10, 88, 202; /* RGB version nito, para magamit sa box-shadow na may transparency */
+  --link-rgb: 10, 88, 202;
 
-  /* Semantic colors (Mga kulay na may meaning, para sa alerts at status) */
-  --success: #16a34a; /* Green para sa "success" */
-  --danger: #dc2626; /* Red para sa "error" or "delete" */
-  --warning: #f59e0b; /* Orange/Yellow para sa "warning" */
-  --info: #0ea5e9; /* Blue para sa mga "info" or reminders */
+  /* Semantic */
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #f59e0b;
+  --info: #0ea5e9;
 
-  /* Layout tokens – Mga shadow at pagka-curve ng gilid para maging modern ang look. */
-  --radius: 10px; /* Gaano ka-curve ang mga corners */
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Default na shadow ng elements */
-  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12); /* Shadow pag na-hover */
+  /* Layout */
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
 
-  /* Bootstrap variable tie-ins (Para compatible sa Bootstrap styles) */
+  /* Bootstrap ties */
   --bs-body-font-family: "Poppins", "Segoe UI", Arial, sans-serif;
   --bs-primary: var(--primary);
   --bs-success: var(--success);
@@ -62,12 +52,11 @@
 }
 
 /* =========================
-   Design Tokens (Para sa Dark Mode)
-   — Same lang sa taas, pero in-adjust yung colors para comfy
-     sa mata kapag dark ang theme.
+   Design Tokens – Dark Mode
    ========================= */
 :root[data-theme="dark"] {
   color-scheme: dark;
+
   --bg: #0e1218;
   --surface: #151b24;
   --surface-2: #0f141c;
@@ -76,27 +65,28 @@
   --ink-soft: #cfd6de;
   --placeholder: #b7c0ca;
   --label: #f2f6fa;
+
   --primary: #f3f4f6;
   --primary-hover: #e5e7eb;
   --primary-text: #0f141b;
+
   --link-color: #2196f3;
   --link-rgb: 33, 150, 243;
 }
 
 /* =========================
    Base & Global Settings
-   — Ito yung mga universal styles na nag-aapply sa buong website,
-     para sa body, texts, at default na itsura ng fonts.
    ========================= */
 html,
 body {
   min-height: 100%;
   background: var(--bg);
   color: var(--ink);
-  scroll-behavior: smooth; /* Para smooth ang pag-scroll pag may link na pinindot */
+  scroll-behavior: smooth;
   font-size: 16px;
   line-height: 1.6;
 }
+
 h1,
 h2,
 h3,
@@ -107,28 +97,29 @@ h6 {
   letter-spacing: -0.2px;
   font-weight: 700;
 }
-/* Para sure na consistent ang .bg-light kahit dark mode. */
+
 .bg-light {
   background-color: var(--bg) !important;
 }
-/* Para sa mga "muted" text, yung mga hindi dapat masyadong pansinin. */
+
+/* Muted text */
 .small,
 .form-text,
 .text-muted {
   color: var(--ink-soft) !important;
 }
-/* Tweak lang sa muted text pag dark mode para mabasa pa rin. */
 :root[data-theme="dark"] .text-muted,
 :root[data-theme="dark"] .table .text-muted {
   color: #dbe3ea !important;
 }
-/* Style para sa "empty state" sa tables or cards (e.g., "No data available"). */
+
 .table td.text-center.text-muted,
 .card .text-muted {
   font-weight: 500;
   letter-spacing: 0.2px;
 }
-/* Style ng mga link para malinis at consistent sa lahat ng browser. */
+
+/* Links */
 a {
   color: var(--link-color);
   text-decoration-line: underline;
@@ -138,7 +129,8 @@ a {
 a:hover {
   text-decoration-thickness: 2px;
 }
-/* Accessibility - Respect sa mga user na ayaw ng maraming animation. */
+
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -147,7 +139,8 @@ a:hover {
     animation: none !important;
   }
 }
-/* Smooth transition para hindi bigla yung pag-change ng colors pag nag-switch ng mode. */
+
+/* Smooth transitions on key components */
 .btn,
 .card,
 .form-control,
@@ -160,9 +153,7 @@ a:hover {
 }
 
 /* =========================
-   Navbar Section (Yung nasa taas)
-   — Dito nakalagay ang styles para sa navigation bar.
-   — Ang focus ay para maging clear at balanced tingnan sa light at dark mode.
+   Navbar
    ========================= */
 .navbar {
   background: var(--surface);
@@ -171,12 +162,13 @@ a:hover {
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow);
 }
+
 .navbar .navbar-brand,
 .navbar .navbar-text,
 .navbar .nav-link {
   color: var(--ink) !important;
 }
-/* Para uniform ang style ng mga outline button sa loob ng navbar. */
+
 .navbar .btn-outline-light {
   color: var(--ink);
   border-color: var(--border);
@@ -184,7 +176,6 @@ a:hover {
 .navbar .btn-outline-light:hover {
   background: var(--surface-2);
 }
-/* Dark mode-specific style para sa outline button sa navbar. */
 :root[data-theme="dark"] .navbar .btn-outline-light {
   color: var(--ink);
   border-color: var(--border);
@@ -192,7 +183,8 @@ a:hover {
 :root[data-theme="dark"] .navbar .btn-outline-light:hover {
   background: rgba(255, 255, 255, 0.06);
 }
-/* Maliit na bilog sa tabi ng brand logo. */
+
+/* Brand icon */
 .brand-dot {
   width: 10px;
   height: 10px;
@@ -203,8 +195,7 @@ a:hover {
 }
 
 /* =========================
-   Cards Section
-   — Ito yung mga "box" or container para sa content, tables, at stats.
+   Cards
    ========================= */
 .card {
   border: 1px solid var(--border);
@@ -213,36 +204,40 @@ a:hover {
   box-shadow: var(--shadow);
   overflow: hidden;
 }
+
 .card.card-lift:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
+
 .card .card-title {
   font-weight: 700;
   color: var(--ink);
 }
-/* Para sure na nababasa ang mga label at title sa card kahit dark mode. */
+
+/* Ensure readable labels/titles in dark mode */
 .card .form-label,
 .card .card-title,
 .card h5,
 .card h6 {
   color: var(--label);
 }
-/* Para sa mga stat at auth cards, neutral lang ang border para clean tingnan. */
+
 .stat-card,
 .auth-card {
   border: 1px solid var(--border);
 }
 
 /* =========================
-   Buttons Section
-   — Ito yung main styles ng button para consistent ang itsura.
+   Buttons
    ========================= */
 .btn {
   border-radius: var(--radius);
   font-weight: 600;
   padding: 0.58rem 1.1rem;
 }
+
+/* Primary */
 .btn-primary {
   background: var(--primary);
   border-color: var(--primary);
@@ -254,7 +249,8 @@ a:hover {
   border-color: var(--primary-hover);
   color: var(--primary-text);
 }
-/* Secondary buttons – Yung simple lang na may border. */
+
+/* Secondary */
 .btn-secondary {
   background: transparent;
   border-color: var(--border);
@@ -264,7 +260,8 @@ a:hover {
   background: var(--surface-2);
   color: var(--ink);
 }
-/* Better focus indicator para sa accessibility (para sa mga gumagamit ng keyboard). */
+
+/* Focus visible */
 .btn:focus-visible,
 .theme-fab:focus-visible,
 .form-control:focus-visible,
@@ -279,14 +276,87 @@ a:hover {
   box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.35);
 }
 
+/* Auth button */
+.btn-auth {
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--primary);
+  color: var(--primary-text);
+  letter-spacing: 0.4px;
+  transition: background-color 0.18s, color 0.18s, border-color 0.18s,
+    box-shadow 0.18s;
+}
+.btn-auth:hover,
+.btn-auth:focus {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: var(--primary-text);
+}
+:root[data-theme="dark"] .btn-auth {
+  background: #1c2531;
+  border-color: #2a3649;
+  color: #eef3f8;
+}
+:root[data-theme="dark"] .btn-auth:hover,
+:root[data-theme="dark"] .btn-auth:focus {
+  background: #273444;
+  border-color: #35465b;
+}
+
+/* Archive button */
+.btn-archive {
+  background: var(--warning);
+  border-color: var(--warning);
+  color: #1f2937;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+}
+.btn-archive:hover,
+.btn-archive:focus {
+  filter: brightness(1.06);
+  color: #1f2937;
+}
+:root[data-theme="dark"] .btn-archive {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #fff;
+}
+:root[data-theme="dark"] .btn-archive:hover {
+  filter: brightness(1.12);
+}
+
+/* Update button (users table) */
+.btn-update-blue {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #ffffff;
+}
+.btn-update-blue:hover,
+.btn-update-blue:focus {
+  background-color: #2969ad;
+  border-color: #2969ad;
+  color: #ffffff;
+}
+:root[data-theme="dark"] .btn-update-blue {
+  background-color: #0d6efd;
+  border-color: #3a86ff;
+  color: white;
+}
+:root[data-theme="dark"] .btn-update-blue:hover,
+:root[data-theme="dark"] .btn-update-blue:focus {
+  background-color: #2969ad;
+  border-color: #2969ad;
+}
+
 /* =========================
-   Forms (Input fields, etc.)
+   Forms
    ========================= */
 .form-label,
 label {
   color: var(--label);
   font-weight: 600;
 }
+
 .form-control,
 .form-select {
   border-radius: var(--radius);
@@ -302,7 +372,7 @@ label {
   border-color: #2a3649;
   color: #eef3f8;
 }
-/* Para mabasa ang placeholder text sa light at dark mode. */
+
 .form-control::placeholder {
   color: var(--placeholder);
   opacity: 0.95;
@@ -311,10 +381,8 @@ label {
 .form-control::-ms-input-placeholder {
   color: var(--placeholder);
 }
-/* =========================
-   Input focus styles
-   — Para may highlight kapag naka-select or naka-focus ang input/select
-   ========================= */
+
+/* Focus */
 .form-control:focus,
 .form-select:focus {
   border-color: var(--link-color);
@@ -331,7 +399,6 @@ label {
 
 /* =========================
    Headline Numbers / Stats
-   — Malalaking numero o importanteng text sa dashboard
    ========================= */
 .display-6,
 .h1,
@@ -342,8 +409,7 @@ label {
 }
 
 /* =========================
-   Tables (Listahan ng data)
-   — Para sa product list, users, etc.
+   Tables
    ========================= */
 .table {
   color: var(--ink);
@@ -361,23 +427,21 @@ label {
   color: var(--label);
   border-bottom-color: #2a3649;
 }
+
 .table > :not(caption) > * > * {
   border-bottom-width: 1px;
   border-color: var(--border);
 }
-/* Row hover effect para makita kung nasaan ang cursor */
+
+/* Hover */
 .table-hover tbody tr:hover {
   background: var(--surface-2);
 }
 :root[data-theme="dark"] .table-hover tbody tr:hover {
   background: #121a28;
 }
-/* Para readable pa rin ang text sa empty state row kahit dark mode */
-:root[data-theme="dark"] .table td.text-muted {
-  color: #dbe3ea !important;
-}
 
-/* Low-stock styling: may color ang row at may attention-grabbing badge */
+/* Low-stock styling */
 .table-warning {
   --bs-table-bg: transparent !important;
   --bs-table-color: inherit !important;
@@ -385,26 +449,33 @@ label {
 .table-warning td {
   background: rgba(245, 158, 11, 0.08);
 }
-/* Badge animation para alert agad ang user */
-.badge.bg-warning {
-  color: #1f2937 !important;
-  animation: pulse 1.4s ease-in-out infinite;
+
+/* Low-stock quantity badge */
+.qty-alert-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.65rem;
+  padding: 0 0.45rem;
+  height: 1.28rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 0.6rem;
+  letter-spacing: 0.3px;
+  background: var(--warning);
+  color: #1f2937;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
 }
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.28);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
-  }
+:root[data-theme="dark"] .qty-alert-badge {
+  background: #f59e0b;
+  color: #0f141b;
+  border-color: #8c5e00;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
 }
 
 /* =========================
-   Alerts (Mga notification box)
-   — Para sa success, error, warning messages
+   Alerts
    ========================= */
 .alert {
   border-radius: var(--radius);
@@ -419,7 +490,7 @@ label {
 :root[data-theme="dark"] .alert {
   background: var(--surface);
 }
-/* Icon styling */
+
 .alert .alert-icon {
   width: 1.2rem;
   height: 1.2rem;
@@ -429,14 +500,11 @@ label {
   margin-top: 0.1rem;
   opacity: 0.95;
 }
-/* Alert content flex para mag-stretch sa available space */
 .alert .alert-content {
   flex: 1;
 }
-/* =========================
-   Specific Alert Types
-   — Error, Success, etc. para agad makita ang type ng notification
-   ========================= */
+
+/* Alert types */
 .alert-danger {
   border-left: 6px solid var(--danger);
   background: rgba(220, 38, 38, 0.08);
@@ -449,6 +517,7 @@ label {
 .alert-danger .alert-icon {
   color: var(--danger);
 }
+
 .alert-success {
   border-left: 6px solid var(--success);
   background: rgba(22, 163, 74, 0.08);
@@ -461,6 +530,7 @@ label {
 .alert-success .alert-icon {
   color: var(--success);
 }
+
 .alert-warning {
   border-left: 6px solid var(--warning);
   background: rgba(245, 158, 11, 0.08);
@@ -473,6 +543,7 @@ label {
 .alert-warning .alert-icon {
   color: var(--warning);
 }
+
 .alert-info {
   border-left: 6px solid var(--info);
   background: rgba(14, 165, 233, 0.08);
@@ -485,7 +556,8 @@ label {
 .alert-info .alert-icon {
   color: var(--info);
 }
-/* Animation para sa pag-appear ng alert (ginagamit ng ui-enhance.js) */
+
+/* Alert animation */
 .alert-animate {
   animation: alertIn 0.22s ease-out both;
 }
@@ -508,8 +580,7 @@ label {
 }
 
 /* =========================
-   Alignment ng actions sa Users table
-   — Para maayos ang buttons at input fields sa row ng table
+   Users Table Actions Layout
    ========================= */
 .table-actions {
   display: flex;
@@ -531,7 +602,6 @@ label {
   width: 200px;
   max-width: 220px;
 }
-/* Responsive design: sa maliit na screen, mag-stack ang actions */
 @media (max-width: 576px) {
   .table-actions {
     flex-direction: column;
@@ -548,8 +618,7 @@ label {
 }
 
 /* =========================
-   Floating Theme Toggle (Yung bilog na button sa bottom right)
-   — Para madaling mag-toggle ng light/dark mode
+   Floating Theme Toggle
    ========================= */
 .theme-fab {
   position: fixed;
@@ -589,7 +658,6 @@ label {
 :root[data-theme="dark"] .theme-fab:hover {
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.65);
 }
-/* Responsive: sa mobile, icon lang para hindi masikip */
 @media (max-width: 576px) {
   .theme-fab {
     padding: 8px 12px;
@@ -600,7 +668,9 @@ label {
   }
 }
 
-/* === PRISM Brand Enhancement (Pampaganda ng Logo) === */
+/* =========================
+   Brand (PRISM)
+   ========================= */
 .prism-logo {
   width: clamp(56px, 4.2rem + 1vw, 92px);
   height: auto;
@@ -619,7 +689,7 @@ label {
 .navbar-brand:hover .prism-logo {
   transform: translateY(-4px) scale(1.03);
 }
-/* Animated gradient para sa "PRISM" text */
+
 .brand-text {
   position: relative;
   font-weight: 700;
@@ -676,13 +746,15 @@ label {
   }
 }
 
-/* === Users Table Column Layout Enhancements === */
+/* =========================
+   Users Table – Column Layout
+   ========================= */
 .users-table th,
 .users-table td {
   vertical-align: middle;
   white-space: nowrap;
 }
-/* Specific column widths para hindi mag-overlap o masyadong siksik */
+
 .users-table .col-id {
   width: 60px;
 }
@@ -698,7 +770,7 @@ label {
 .users-table .col-actions {
   width: 140px;
 }
-/* Ensure internal form controls fill nicely without breaking row height */
+
 .users-table .role-form select,
 .users-table .password-form input {
   min-width: 110px;
@@ -706,7 +778,7 @@ label {
 .users-table .password-form input {
   flex: 1 1 auto;
 }
-/* Stack forms gracefully on very narrow screens */
+
 @media (max-width: 640px) {
   .users-table .role-form,
   .users-table .password-form {
@@ -719,12 +791,17 @@ label {
     white-space: normal;
   }
 }
-/* Toggle password icon size tweaks */
+
+/* Password toggle */
 .input-group .btn.toggle-visibility.btn-sm i,
 .password-wrap .btn.toggle-visibility.btn-sm i {
   font-size: 0.85rem;
 }
-/* Users table: stack action buttons vertically and style Update button */
+.password-wrap .toggle-visibility.btn-sm {
+  padding: 0.25rem 0.5rem;
+}
+
+/* Users actions stack */
 .action-stack {
   display: flex;
   flex-direction: column;
@@ -735,35 +812,10 @@ label {
 .action-stack .btn {
   width: 100%;
 }
-/* Solid blue Update button with lighter hover */
-.btn-update-blue {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  color: #ffffff;
-}
-.btn-update-blue:hover,
-.btn-update-blue:focus {
-  background-color: #2969ad;
-  border-color: #2969ad;
-  color: #ffffff;
-}
-/* Dark mode tweak ng Update button */
-:root[data-theme="dark"] .btn-update-blue {
-  background-color: #0d6efd;
-  border-color: #3a86ff;
-  color: white;
-}
-:root[data-theme="dark"] .btn-update-blue:hover,
-:root[data-theme="dark"] .btn-update-blue:focus {
-  background-color: #2969ad;
-  border-color: #2969ad;
-}
-/* Password toggle button padding tweaks */
-.password-wrap .toggle-visibility.btn-sm {
-  padding: 0.25rem 0.5rem;
-}
 
-/* === Activity Log Action Badges (Custom Palette) === */
+/* =========================
+   Activity Log Badges
+   ========================= */
 .badge-action {
   display: inline-block;
   padding: 0.38rem 0.7rem;
@@ -778,66 +830,27 @@ label {
   background: #6b7280;
   color: #fff;
 }
-/* Specific colors for different actions */
-.badge-create {
-  background: #0f7a32;
-}
-.badge-update {
-  background: #b46900;
-}
-.badge-delete {
-  background: #c62828;
-}
-.badge-login {
-  background: #0d47a1;
-}
-.badge-logout {
-  background: #455a64;
-}
-.badge-archive {
-  background: #b88600;
-}
-.badge-restore {
-  background: #5d2bb8;
-}
-.badge-generic {
-  background: #6b7280;
-}
-/* Dark mode colors */
-:root[data-theme="dark"] .badge-create {
-  background: #16a34a;
-  border-color: #1f7d3d;
-}
-:root[data-theme="dark"] .badge-update {
-  background: #d97706;
-  border-color: #a05a04;
-}
-:root[data-theme="dark"] .badge-delete {
-  background: #dc2626;
-  border-color: #a61d1d;
-}
-:root[data-theme="dark"] .badge-login {
-  background: #2563eb;
-  border-color: #1d4fb5;
-}
-:root[data-theme="dark"] .badge-logout {
-  background: #64748b;
-  border-color: #4b5563;
-}
-:root[data-theme="dark"] .badge-archive {
-  background: #f59e0b;
-  border-color: #f59e0b;
-  color: #fff;
-}
-:root[data-theme="dark"] .badge-restore {
-  background: #7c3aed;
-  border-color: #5a27ad;
-}
-:root[data-theme="dark"] .badge-generic {
-  background: #6b7280;
-  border-color: #52575f;
-}
-/* Hover effect para sa badges */
+
+/* Specific action colors */
+.badge-create { background: #0f7a32; }
+.badge-update { background: #b46900; }
+.badge-delete { background: #c62828; }
+.badge-login  { background: #0d47a1; }
+.badge-logout { background: #455a64; }
+.badge-archive{ background: #b88600; }
+.badge-restore{ background: #5d2bb8; }
+.badge-generic{ background: #6b7280; }
+
+/* Dark mode variants */
+:root[data-theme="dark"] .badge-create  { background: #16a34a; border-color: #1f7d3d; }
+:root[data-theme="dark"] .badge-update  { background: #d97706; border-color: #a05a04; }
+:root[data-theme="dark"] .badge-delete  { background: #dc2626; border-color: #a61d1d; }
+:root[data-theme="dark"] .badge-login   { background: #2563eb; border-color: #1d4fb5; }
+:root[data-theme="dark"] .badge-logout  { background: #64748b; border-color: #4b5563; }
+:root[data-theme="dark"] .badge-archive { background: #f59e0b; border-color: #f59e0b; color: #fff; }
+:root[data-theme="dark"] .badge-restore { background: #7c3aed; border-color: #5a27ad; }
+:root[data-theme="dark"] .badge-generic { background: #6b7280; border-color: #52575f; }
+
 .badge-action:hover,
 .badge-action:focus {
   filter: brightness(1.08);
@@ -850,9 +863,7 @@ label {
 }
 
 /* =========================
-   Logs page styles (add to end of theme.css)
-   These rules use the same CSS variables as the rest of the theme so
-   the logs table will automatically follow light/dark mode.
+   Logs Page
    ========================= */
 .logs-card .table-responsive {
   background: var(--surface);
@@ -863,6 +874,7 @@ label {
 :root[data-theme="dark"] .logs-card .table-responsive {
   border-color: #2a3649;
 }
+
 .table-logs {
   width: 100%;
   border-collapse: collapse;
@@ -930,7 +942,7 @@ label {
   }
 }
 
-/* ===== Logs table + pagination unified styling (append once at end) ===== */
+/* Logs & products pagination */
 .pagination-theme .page-link {
   background: var(--surface);
   color: var(--ink);
@@ -969,122 +981,8 @@ label {
   }
 }
 
-/* ==========================================================
-   Adaptive Auth Button + Active Products + Low-Stock Styling
-   (Appended code - keeps original comments intact)
-   ========================================================== */
-.btn-auth {
-  font-weight: 600;
-  border: 1px solid var(--border);
-  background: var(--primary);
-  color: var(--primary-text);
-  letter-spacing: 0.4px;
-  transition: background-color 0.18s, color 0.18s, border-color 0.18s,
-    box-shadow 0.18s;
-}
-.btn-auth:hover,
-.btn-auth:focus {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
-  color: var(--primary-text);
-}
-:root[data-theme="dark"] .btn-auth {
-  background: #1c2531;
-  border-color: #2a3649;
-  color: #eef3f8;
-}
-:root[data-theme="dark"] .btn-auth:hover,
-:root[data-theme="dark"] .btn-auth:focus {
-  background: #273444;
-  border-color: #35465b;
-}
-/* Archive button variant (consistent across themes) */
-.btn-archive {
-  background: var(--warning);
-  border-color: var(--warning);
-  color: #1f2937;
-  font-weight: 600;
-  padding: 0.4rem 0.9rem;
-}
-.btn-archive:hover,
-.btn-archive:focus {
-  filter: brightness(1.06);
-  color: #1f2937;
-}
-:root[data-theme="dark"] .btn-archive {
-  background: #f59e0b;
-  border-color: #f59e0b;
-  color: #fff;
-}
-:root[data-theme="dark"] .btn-archive:hover {
-  filter: brightness(1.12);
-}
-/* Products table: adaptive header in dark mode if Bootstrap classes are present */
-:root[data-theme="dark"] .card .table thead th {
-  background: #121a28;
-  border-bottom-color: #2a3649;
-  color: var(--label);
-}
-/* Default row surface */
-.row-normal td {
-  background: var(--surface);
-}
-/* Low-stock row (high-contrast yet subtle in both themes) */
-.row-low-stock td {
-  background: rgba(245, 158, 11, 0.12);
-  position: relative;
-}
-:root[data-theme="dark"] .row-low-stock td {
-  background: rgba(245, 158, 11, 0.18);
-}
-/* Left indicator bar for low-stock rows */
-.row-low-stock td:first-child {
-  box-shadow: inset 3px 0 0 0 var(--warning);
-}
-/* Quantity badge for low stock (accessible) */
-.qty-alert-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.65rem;
-  padding: 0 0.45rem;
-  height: 1.28rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  border-radius: 0.6rem;
-  letter-spacing: 0.3px;
-  background: var(--warning);
-  color: #1f2937;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
-}
-:root[data-theme="dark"] .qty-alert-badge {
-  background: #f59e0b;
-  color: #0f141b;
-  border-color: #8c5e00;
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
-}
-/* Hover state for low-stock rows */
-.table-hover .row-low-stock:hover td {
-  background: rgba(245, 158, 11, 0.18);
-}
-:root[data-theme="dark"] .table-hover .row-low-stock:hover td {
-  background: rgba(245, 158, 11, 0.26);
-}
-
-/* Pagination theme used in products/logs (already defined above; kept for context) */
-
-/* Smooth transitions for new elements */
-.row-low-stock td,
-.qty-alert-badge,
-.btn-archive,
-.btn-auth {
-  transition: background-color 0.18s ease, color 0.18s ease,
-    border-color 0.18s ease, filter 0.18s ease;
-}
-
 /* =========================
-   Users table adaptive theming (light/dark)
+   Users Table – Theming
    ========================= */
 .users-card .table-responsive {
   background: var(--surface);
@@ -1092,7 +990,7 @@ label {
   border-radius: calc(var(--radius) - 2px);
   padding: 0.5rem;
 }
-/* Make sure Users table follows theme variables */
+
 .users-table thead th {
   background: var(--surface-2);
   color: var(--label);
@@ -1106,13 +1004,15 @@ label {
   border-bottom-color: #2a3649;
   color: var(--label);
 }
-/* If table-light accidentally remains, override it gracefully */
+
+/* Override accidental .table-light */
 .users-table thead.table-light th {
   background: var(--surface-2) !important;
   color: var(--label) !important;
   border-bottom-color: var(--border) !important;
 }
-/* Body cells */
+
+/* Body */
 .users-table tbody td {
   background: var(--surface);
   color: var(--ink);
@@ -1131,7 +1031,9 @@ label {
   color: inherit;
 }
 
-/* ===== Product table adaptive fonts (moved from products.php inline <style>) ===== */
+/* =========================
+   Product Table – Theming
+   ========================= */
 .product-table thead th {
   color: var(--label);
   background: var(--surface-2);
@@ -1148,29 +1050,43 @@ label {
   background: var(--surface);
   border-top: 1px solid var(--border);
 }
-/* keep low-stock tint but ensure readable text */
 .product-table tbody tr.row-low-stock td {
   color: var(--ink);
 }
 :root[data-theme="dark"] .product-table tbody tr.row-low-stock td {
   color: var(--ink);
 }
-/* hover */
 .product-table tbody tr:hover td {
   background: var(--surface-2);
 }
 :root[data-theme="dark"] .product-table tbody tr:hover td {
   background: #121a28;
 }
-/* qty badge legibility on both themes */
-.qty-alert-badge {
-  color: #1f2937;
-  font-weight: 700;
+
+/* Low-stock rows */
+.row-normal td {
+  background: var(--surface);
 }
-:root[data-theme="dark"] .qty-alert-badge {
-  color: #0f141b;
+.row-low-stock td {
+  background: rgba(245, 158, 11, 0.12);
+  position: relative;
+}
+:root[data-theme="dark"] .row-low-stock td {
+  background: rgba(245, 158, 11, 0.18);
+}
+.row-low-stock td:first-child {
+  box-shadow: inset 3px 0 0 0 var(--warning);
+}
+.table-hover .row-low-stock:hover td {
+  background: rgba(245, 158, 11, 0.18);
+}
+:root[data-theme="dark"] .table-hover .row-low-stock:hover td {
+  background: rgba(245, 158, 11, 0.26);
 }
 
+/* =========================
+   Product Table Toolbar
+   ========================= */
 .table-toolbar {
   display: flex;
   justify-content: space-between;
@@ -1178,71 +1094,142 @@ label {
   gap: 1rem;
   flex-wrap: wrap;
 }
-
 .toolbar-left,
 .toolbar-right {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-
 .toolbar-right .input-group {
   width: 260px;
 }
-
 @media (max-width: 768px) {
   .table-toolbar {
     flex-direction: column;
     align-items: stretch;
   }
-
   .toolbar-left,
   .toolbar-right {
     justify-content: space-between;
   }
-
   .toolbar-right .input-group {
     width: 100%;
   }
 }
 
-/* Make Columns dropdown text dark */
+/* Columns dropdown menu */
 .columns-menu,
 .columns-menu * {
-  color: #343a40 !important; /* Bootstrap dark text */
+  color: #343a40 !important;
 }
-
-/* Checkbox labels darker */
 .columns-menu .form-check-label {
   color: #343a40 !important;
   font-weight: 500;
 }
-
-/* Checkbox itself (checked + unchecked) */
 .columns-menu .form-check-input {
   border-color: #6c757d;
 }
-
-/* Optional: hover effect */
 .columns-menu .form-check:hover {
   background-color: #f8f9fa;
   border-radius: 4px;
 }
 
-/* Action buttons in product table: keep even spacing & padding */
+/* Product action buttons */
 .action-btn-group {
-  gap: 0.5rem;            /* space between buttons */
+  gap: 0.5rem;
 }
-
 .action-btn-group .btn {
-  min-width: 80px;        /* so labels don’t collapse too small */
-  padding-inline: 0.9rem; /* horizontal padding */
-  padding-block: 0.3rem;  /* vertical padding */
-}
-
-/* If a button text wraps, keep a bit of vertical space between wrapped lines */
-.action-btn-group .btn {
+  min-width: 80px;
+  padding-inline: 0.9rem;
+  padding-block: 0.3rem;
   line-height: 1.2;
 }
 
 
+.card.requisition-card {
+  border-radius: 0.75rem;
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--ink);
+}
+
+/* Use token-based colors so they adapt automatically */
+.card.requisition-card {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--ink);
+}
+.card.requisition-card .card-title,
+.card.requisition-card h5,
+.card.requisition-card h6,
+.card.requisition-card dt {
+  color: var(--label);
+}
+.card.requisition-card .form-label,
+.card.requisition-card .table th {
+  color: var(--label);
+}
+.card.requisition-card .table td {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .card.requisition-card {
+  background-color: #151b24;
+  border-color: #273144;
+  color: #e5e7eb;
+}
+:root[data-theme="dark"] .card.requisition-card .card-title,
+:root[data-theme="dark"] .card.requisition-card h5,
+:root[data-theme="dark"] .card.requisition-card h6,
+:root[data-theme="dark"] .card.requisition-card dt {
+  color: #f9fafb;
+}
+:root[data-theme="dark"] .card.requisition-card .form-label,
+:root[data-theme="dark"] .card.requisition-card .table th {
+  color: #e5e7eb;
+}
+:root[data-theme="dark"] .card.requisition-card .table td {
+  color: #e5e7eb;
+}
+:root[data-theme="dark"] .card.requisition-card .text-muted {
+  color: #9ca3af !important;
+}
+
+/* Smooth transitions for new components */
+.row-low-stock td,
+.qty-alert-badge,
+.btn-archive,
+.btn-auth {
+  transition: background-color 0.18s ease, color 0.18s ease,
+    border-color 0.18s ease, filter 0.18s ease;
+}
+
+/* DEBUG OVERRIDE: force everything to use the token colors */
+body {
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+.card {
+  background: var(--surface) !important;
+  color: var(--ink) !important;
+}
+
+.table td,
+.table th {
+  color: var(--ink) !important;
+  background-color: transparent !important; /* card controls bg */
+}
+
+/* Make the Save Notes outline button readable on both themes */
+.save-notes-btn {
+  border-color: var(--border);
+  color: var(--ink);
+  background: transparent;
+}
+
+.save-notes-btn:hover,
+.save-notes-btn:focus {
+  background: var(--surface-2);
+  color: var(--ink);
+}
