@@ -5,11 +5,13 @@
 @section('content')
 @if (session('message')) {!! session('message') !!} @endif
 
-<div class="card shadow-sm mb-3">
+<div class="card shadow-sm mb-3 requisition-card">
   <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
     <div>
       <h5 class="mb-1">Request #{{ $req->id }}</h5>
       <div class="text-muted small">
+        View details for this stock request.
+        <br>
         Status:
         @php
           $badgeClass = match ($req->status) {
@@ -43,15 +45,16 @@
 
       @if (in_array($req->status, ['draft','rejected','cancelled']))
         <form method="POST"
-                action="{{ route('requisitions.my.delete', $req->id) }}"
-                onsubmit="return confirm('PERMANENTLY delete this request? This cannot be undone.');">
-            @csrf
-            <button class="btn btn-outline-danger btn-sm">Delete</button>
+              action="{{ route('requisitions.my.delete', $req->id) }}"
+              onsubmit="return confirm('PERMANENTLY delete this request? This cannot be undone.');">
+          @csrf
+          <button class="btn btn-outline-danger btn-sm">Delete</button>
         </form>
       @endif
 
       @if (in_array($req->status, ['draft','submitted']))
-        <form method="POST" action="{{ route('requisitions.my.cancel', $req->id) }}" onsubmit="return confirm('Cancel this request?');">
+        <form method="POST" action="{{ route('requisitions.my.cancel', $req->id) }}"
+              onsubmit="return confirm('Cancel this request?');">
           @csrf
           <button class="btn btn-outline-danger btn-sm">Cancel</button>
         </form>

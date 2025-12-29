@@ -5,7 +5,7 @@
 @section('content')
 @if (session('message')) {!! session('message') !!} @endif
 
-<div class="card shadow-sm mb-3">
+<div class="card shadow-sm mb-3 requisition-card">
   <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
     <div>
       <h5 class="mb-1">Edit Request #{{ $req->id }}</h5>
