@@ -39,9 +39,9 @@ Route::get('/register', [\App\Http\Controllers\AuthController::class, 'registerF
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register.post');
 
 /*
-|--------------------------------------------------------------------------
-| Forgot / Reset Password (custom flow you already have)
-|--------------------------------------------------------------------------
+
+ Forgot / Reset Password (custom flow you already have)
+
 */
 
 // Show "Forgot Password" form
@@ -61,23 +61,11 @@ Route::post('/reset-password', [ResetPasswordController::class, 'reset'])
     ->name('password.update');
 
 
-/*
-|--------------------------------------------------------------------------
-| Protected Routes (logged-in users only)
-|--------------------------------------------------------------------------
-|
-| These still use your custom EnsureAuthenticated middleware which checks
-| session('user') / session('role'). We ALSO log users in via Laravel's
-| Auth::login() in LoginController so Fortify / 2FA can work.
-|
-*/
 
 Route::middleware([EnsureAuthenticated::class])->group(function () {
 
     /*
-    |--------------------------------------------------------------------------
-    | Products
-    |--------------------------------------------------------------------------
+        Products
     */
     Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
     Route::post('/products/create', [ProductsController::class, 'create'])->name('products.create');
@@ -90,9 +78,7 @@ Route::middleware([EnsureAuthenticated::class])->group(function () {
     Route::get('/products/export', [ProductsController::class, 'exportCsv'])->name('products.exportCsv');
 
     /*
-    |--------------------------------------------------------------------------
-    | Account
-    |--------------------------------------------------------------------------
+         Account
     */
     Route::get('/account', [AccountController::class, 'form'])->name('account.form');
     Route::post('/account/change-password', [AccountController::class, 'changePassword'])->name('account.changePassword');
@@ -101,11 +87,6 @@ Route::middleware([EnsureAuthenticated::class])->group(function () {
     Route::get('/account/two-factor-setup', [TwoFactorSetupController::class, 'show'])
         ->name('account.twoFactorSetup');
 
-    /*
-    |--------------------------------------------------------------------------
-    | User: My Requests
-    |--------------------------------------------------------------------------
-    */
     Route::get('/my-requests', [RequisitionsController::class, 'myRequests'])->name('requisitions.my.index');
     Route::post('/my-requests/create', [RequisitionsController::class, 'createDraft'])->name('requisitions.my.create');
     Route::get('/my-requests/{id}', [RequisitionsController::class, 'showMy'])->name('requisitions.my.show');
@@ -116,14 +97,9 @@ Route::middleware([EnsureAuthenticated::class])->group(function () {
     Route::post('/my-requests/{id}/cancel', [RequisitionsController::class, 'cancelMy'])->name('requisitions.my.cancel');
     Route::post('/my-requests/{id}/notes', [RequisitionsController::class, 'saveNotesMy'])->name('requisitions.my.notes.save');
 
-    // USER delete route – user-only, not under admin middleware
     Route::post('/my-requests/{id}/delete', [RequisitionsController::class, 'deleteMy'])->name('requisitions.my.delete');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Admin-only routes
-    |--------------------------------------------------------------------------
-    */
+
 
     Route::middleware([EnsureAdmin::class])->group(function () {
 

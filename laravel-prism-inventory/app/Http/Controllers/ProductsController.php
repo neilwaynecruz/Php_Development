@@ -253,7 +253,7 @@ class ProductsController extends Controller
             session()->flash('message', $msg); return back()->withInput();
         }
 
-        // --- FETCH OLD PRODUCT (for image + low-stock comparison) ---
+        // FETCH OLD PRODUCT (for image + low-stock comparison)
         $oldRow = DB::selectOne("SELECT image_path, name, sku, barcode, category, quantity, price FROM products WHERE product_id = ?", [$id]);
         if (! $oldRow) {
             $msg = '<div class="alert alert-danger">Product not found.</div>';
@@ -289,7 +289,7 @@ class ProductsController extends Controller
             $imageRemoved = false;
         }
 
-        // --- UPDATE PRODUCT ---
+        //  UPDATE PRODUCT
         DB::update(
             "UPDATE products
             SET sku = ?, barcode = ?, name = ?, category = ?, quantity = ?, price = ?, image_path = ?
@@ -306,7 +306,7 @@ class ProductsController extends Controller
             ]
         );
 
-        // --- LOW-STOCK EVENT: fire when crossing into low stock, using global threshold ---
+        // LOW-STOCK EVENT: fire when crossing into low stock, using global threshold 
         $newQty = (int) $qty;
         if ($newQty <= $threshold && $oldQty > $threshold) {
             event(new LowStockDetected([
@@ -319,7 +319,7 @@ class ProductsController extends Controller
             ]));
         }
 
-        // --- LOGGING ---
+        //  LOGGING 
         $logDetails = "Updated: $name";
         if ($sku !== '') {
             $logDetails .= " (SKU: $sku)";
