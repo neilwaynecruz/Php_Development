@@ -2,99 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function loginForm()
-    {
-        if (session()->has('user')) return redirect()->route('products.index');
-        return view('auth.login');
-    }
+    /**
+     * LEGACY login / logout methods are no longer used.
+     * Login is handled by App\Http\Controllers\Auth\LoginController.
+     * We keep these empty so any old references won't crash.
+     */
+    public function loginForm() {}
+    public function login() {}
+    public function logout() {}
 
-    public function login(Request $request)
-    {
-        $u = trim((string)$request->input('username', ''));
-        $p = trim((string)$request->input('password', ''));
-
-        // Preserve original validation messages
-        $errors = [];
-        if ($u === '') $errors[] = "Username is required.";
-        if ($p === '') $errors[] = "Password is required.";
-        if ($errors) {
-            session()->flash('message', '<div class="alert alert-danger">'.implode("<br>", $errors).'</div>');
-            return back();
-        }
-
-        // Lookup and plaintext fallback (to match current behavior)
-        $row = DB::table('users')->where('username', $u)->first();
-        $valid = false; $role = 'user';
-        if ($row) {
-            $stored = $row->password;
-            if (password_verify($p, $stored) || $stored === $p) {
-                $valid = true;
-                $role = $row->role ?? 'user';
-            }
-        }
-
-        if ($valid) {
-            session()->regenerate();
-            session(['user' => $u, 'role' => $role]);
-            DB::table('activity_logs')->insert(['username' => $u, 'action' => 'login', 'product_id' => null, 'details' => null]);
-            session()->flash('message', '<div class="alert alert-success">Login successful. Welcome, '.e($u).'!</div>');
-            return redirect()->route('products.index');
-        }
-
-        session()->flash('message', '<div class="alert alert-danger">Invalid username or password.</div>');
-        return back();
-    }
-
+    /**
+     * Show the registration form.
+     */
     public function registerForm()
     {
         return view('auth.register');
     }
 
+    /**
+     * Handle new user registration.
+     */
     public function register(Request $request)
     {
-        $u = trim((string)$request->input('username',''));
-        $p = trim((string)$request->input('password',''));
-        $cp= trim((string)$request->input('confirm',''));
+        // Validation (mirrors your old messages but with email + confirmation)
+        $request->validate(
+            [
+                'username' => ['required', 'string', 'min:4', 'max:255', 'unique:users,username'],
+                'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+                'password' => ['required', 'string', 'min:6', 'confirmed'],
+            ],
+            [
+                'username.required' => 'Username is required.',
+                'username.min'      => 'Username must be at least 4 characters.',
+                'username.unique'   => 'Username is already taken.',
+                'email.required'    => 'Email is required.',
+                'email.email'       => 'Please enter a valid email.',
+                'email.unique'      => 'Email is already in use.',
+                'password.required' => 'Password is required.',
+                'password.min'      => 'Password must be at least 6 characters.',
+                'password.confirmed'=> 'Passwords do not match.',
+            ]
+        );
 
-        $errors = [];
-        if ($u === '') $errors[] = "Username is required.";
-        if ($p === '') $errors[] = "Password is required.";
-        if ($cp=== '') $errors[] = "Confirm Password is required.";
-        if ($u !== '' && strlen($u) < 4) $errors[] = "Username must be at least 4 characters.";
-        if ($p !== '' && strlen($p) < 6) $errors[] = "Password must be at least 6 characters.";
-        if ($p !== '' && $cp !== '' && $p !== $cp) $errors[] = "Passwords do not match.";
+        $username = trim((string) $request->input('username'));
+        $email    = trim((string) $request->input('email'));
 
-        $exists = DB::table('users')->where('username', $u)->exists();
-        if ($exists) $errors[] = "Username is already taken.";
-
-        if ($errors) {
-            session()->flash('message', '<div class="alert alert-danger">'.implode("<br>", $errors).'</div>');
-            return back();
-        }
-
-        DB::table('users')->insert([
-            'username' => $u,
-            'password' => password_hash($p, PASSWORD_DEFAULT),
-            'role' => 'user',
+        // Create user using Eloquent + bcrypt
+        $user = User::create([
+            'username' => $username,
+            'email'    => $email,
+            'password' => Hash::make($request->input('password')),
+            'role'     => 'user', // default role
         ]);
 
-        session()->flash('message', '<div class="alert alert-success">Account created! You can now login.</div>');
-        return redirect()->route('login.form');
-    }
+        // Auto-login after registration using Laravel's auth guard
+        Auth::login($user);
 
-    public function logout(Request $request)
-    {
-        if (session()->has('user')) {
-            $u = (string) session('user');
-            DB::table('activity_logs')->insert(['username' => $u, 'action' => 'logout', 'product_id' => null, 'details' => null]);
-        }
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('login.form');
+        // Preserve your existing session('user') / session('role')
+        session([
+            'user' => $user->username,
+            'role' => $user->role,
+        ]);
+
+        session()->flash(
+            'message',
+            '<div class="alert alert-success">Account created! You are now logged in.</div>'
+        );
+
+        return redirect()->route('products.index');
     }
 }
