@@ -45,7 +45,7 @@
       @endif
 
       <a href="{{ route('account.form') }}" class="btn btn-outline-light btn-sm">Account</a>
-      <a href="{{ route('logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
+      <a href="{{ route('app.logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
     </div>
   </div>
 </nav>

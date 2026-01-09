@@ -32,7 +32,7 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.for
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 
 // Logout
-Route::match(['get', 'post'], '/logout', [LoginController::class, 'logout'])->name('logout');
+Route::match(['get', 'post'], '/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('app.logout');
 
 // Registration (OPTIONAL, still using your old AuthController)
 Route::get('/register', [\App\Http\Controllers\AuthController::class, 'registerForm'])->name('register.form');
