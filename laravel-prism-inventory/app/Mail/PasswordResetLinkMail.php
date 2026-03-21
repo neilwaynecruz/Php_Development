@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Mail;
+
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class PasswordResetLinkMail extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public User $user;
+    public string $token;
+
+    public function __construct(User $user, string $token)
+    {
+        $this->user  = $user;
+        $this->token = $token;
+    }
+
+    public function build()
+    {
+        $resetUrl = url(route('password.reset', ['token' => $this->token, 'email' => $this->user->email], false));
+
+        return $this->subject('Password Reset Request')
+            ->view('emails.password-reset-link', [
+                'user'     => $this->user,
+                'resetUrl' => $resetUrl,
+            ]);
+    }
+}

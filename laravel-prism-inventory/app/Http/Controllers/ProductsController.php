@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Services\SettingsService;
+use App\Events\LowStockDetected;
 
 class ProductsController extends Controller
 {
@@ -206,7 +207,7 @@ class ProductsController extends Controller
         session()->flash('message', $msg); return back();
     }
 
-    public function update(Request $request)
+    public function update(Request $request, SettingsService $settings)
     {
         if ((string) session('role') !== 'admin') {
             $msg = '<div class="alert alert-danger">Access denied: You do not have permission to modify products.</div>';
@@ -252,11 +253,21 @@ class ProductsController extends Controller
             session()->flash('message', $msg); return back()->withInput();
         }
 
-        // existing image
-        $oldRow = DB::selectOne("SELECT image_path FROM products WHERE product_id = ?", [$id]);
-        $oldImage = $oldRow->image_path ?? null;
-        $newImagePath = $oldImage;
+        // FETCH OLD PRODUCT (for image + low-stock comparison)
+        $oldRow = DB::selectOne("SELECT image_path, name, sku, barcode, category, quantity, price FROM products WHERE product_id = ?", [$id]);
+        if (! $oldRow) {
+            $msg = '<div class="alert alert-danger">Product not found.</div>';
+            if ($request->expectsJson()) return response()->json(['ok'=>false,'message'=>$msg], 404);
+            session()->flash('message', $msg); return back();
+        }
 
+        $oldImage = $oldRow->image_path ?? null;
+        $oldQty   = (int) $oldRow->quantity;
+
+        // Use global low-stock threshold from settings
+        $threshold = $settings->getInt('low_stock_threshold', 10);
+
+        $newImagePath = $oldImage;
         $imageUpdated = false;
         $imageRemoved = false;
 
@@ -278,10 +289,11 @@ class ProductsController extends Controller
             $imageRemoved = false;
         }
 
+        //  UPDATE PRODUCT
         DB::update(
             "UPDATE products
-             SET sku = ?, barcode = ?, name = ?, category = ?, quantity = ?, price = ?, image_path = ?
-             WHERE product_id = ?",
+            SET sku = ?, barcode = ?, name = ?, category = ?, quantity = ?, price = ?, image_path = ?
+            WHERE product_id = ?",
             [
                 $sku !== '' ? $sku : null,
                 $barcode !== '' ? $barcode : null,
@@ -294,6 +306,20 @@ class ProductsController extends Controller
             ]
         );
 
+        // LOW-STOCK EVENT: fire when crossing into low stock, using global threshold 
+        $newQty = (int) $qty;
+        if ($newQty <= $threshold && $oldQty > $threshold) {
+            event(new LowStockDetected([
+                'product_id'          => $id,
+                'name'                => $name,
+                'sku'                 => $sku !== '' ? $sku : null,
+                'category'            => $category,
+                'quantity'            => $newQty,
+                'low_stock_threshold' => $threshold,
+            ]));
+        }
+
+        //  LOGGING 
         $logDetails = "Updated: $name";
         if ($sku !== '') {
             $logDetails .= " (SKU: $sku)";

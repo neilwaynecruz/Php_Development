@@ -1233,3 +1233,16 @@ body {
   background: var(--surface-2);
   color: var(--ink);
 }
+
+/* Slight spacing tweak for toolbar buttons (Products table) */
+.table-toolbar .btn-sm {
+  padding-inline: 0.9rem;
+}
+
+/* Centered auth / account cards with consistent width */
+.auth-card,
+.account-card {
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}

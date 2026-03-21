@@ -12,7 +12,7 @@
     <div class="ms-auto d-flex align-items-center">
       <a href="{{ route('products.index') }}" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
       <a href="{{ route('users.index') }}" class="btn btn-outline-light btn-sm me-2">Users</a>
-      <a href="{{ route('logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
+      <a href="{{ route('app.logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
     </div>
   </div>
 </nav>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\RequisitionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\SettingsService;
+use App\Events\LowStockDetected;
 
 class RequisitionsController extends Controller
 {
@@ -217,14 +219,115 @@ class RequisitionsController extends Controller
         }
     }
 
-    public function adminFulfill(Request $request, RequisitionService $service, int $id)
+    public function adminFulfill(Request $request, SettingsService $settings, int $id)
     {
-        $admin = (string) session('user', '');
+        // Only admins should reach this; you might already have middleware.
+        if ((string) session('role') !== 'admin') {
+            $msg = '<div class="alert alert-danger">Access denied: admin only.</div>';
+            session()->flash('message', $msg);
+            return back();
+        }
+
+        // Load requisition and items
+        $req = DB::table('requisitions')->where('id', $id)->first();
+        if (! $req) {
+            $msg = '<div class="alert alert-danger">Requisition not found.</div>';
+            session()->flash('message', $msg);
+            return back();
+        }
+
+        // Only approved requisitions can be fulfilled (adjust if your logic differs)
+        if ($req->status !== 'approved') {
+            $msg = '<div class="alert alert-danger">Only approved requisitions can be fulfilled.</div>';
+            session()->flash('message', $msg);
+            return back();
+        }
+
+        // Get all items in the requisition
+        $items = DB::table('requisition_items')
+            ->where('requisition_id', $id)
+            ->get();
+
+        if ($items->isEmpty()) {
+            $msg = '<div class="alert alert-warning">No items to fulfill.</div>';
+            session()->flash('message', $msg);
+            return back();
+        }
+
+        // Global low-stock threshold from Settings
+        $threshold = $settings->getInt('low_stock_threshold', 10);
+
+        DB::beginTransaction();
+
         try {
-            $service->fulfill($id, $admin);
-            return back()->with('message', '<div class="alert alert-success">Requisition fulfilled and stock updated.</div>');
+            foreach ($items as $it) {
+                // Lock the product row while we update
+                $product = DB::table('products')
+                    ->where('product_id', $it->product_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $product) {
+                    continue; // product deleted? skip
+                }
+
+                $oldQty = (int) $product->quantity;
+                $deduct = (int) $it->quantity;
+                $newQty = max(0, $oldQty - $deduct);
+
+                // Update product quantity
+                DB::table('products')
+                    ->where('product_id', $it->product_id)
+                    ->update([
+                        'quantity'   => $newQty,
+                        'updated_at' => now(),
+                    ]);
+
+                // Fire low-stock event ONLY when crossing from above threshold to at/below threshold
+                if ($newQty <= $threshold && $oldQty > $threshold) {
+                    event(new LowStockDetected([
+                        'product_id'          => $product->product_id,
+                        'name'                => $product->name,
+                        'sku'                 => $product->sku,
+                        'category'            => $product->category,
+                        'quantity'            => $newQty,
+                        'low_stock_threshold' => $threshold,
+                    ]));
+                }
+            }
+
+            // Mark requisition as fulfilled
+            DB::table('requisitions')
+                ->where('id', $id)
+                ->update([
+                    'status'     => 'fulfilled',
+                    'updated_at' => now(),
+                ]);
+
+            // (Optional) log activity if you have an activity_logs table
+            DB::table('activity_logs')->insert([
+                'username'   => (string) session('user', 'admin'),
+                'action'     => 'requisition_fulfill',
+                'product_id' => null,
+                'details'    => "Fulfilled requisition #{$id} and deducted stock.",
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            $msg = '<div class="alert alert-success">Requisition fulfilled and stock deducted.</div>';
+            session()->flash('message', $msg);
+            return redirect()->route('requisitions.admin.show', $id);
         } catch (\Throwable $e) {
-            return back()->with('message', '<div class="alert alert-danger">'.$e->getMessage().'</div>');
+            DB::rollBack();
+
+            // Optionally log the error
+            // \Log::error('Fulfill requisition failed: '.$e->getMessage());
+
+            $msg = '<div class="alert alert-danger">Error fulfilling requisition. Please try again.</div>';
+            session()->flash('message', $msg);
+            return back();
         }
     }
 

@@ -12,25 +12,40 @@
       </span>
     </a>
 
-      <div class="ms-auto d-flex align-items-center gap-2">
-        <span class="navbar-text">
-          Hello, {{ e(session('user')) }}
-          <span class="badge bg-warning text-dark ms-1">{{ e(session('role', 'user')) }}</span>
-        </span>
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <span class="navbar-text">
+        Hello, {{ e(session('user')) }}
+        <span class="badge bg-warning text-dark ms-1">{{ e(session('role', 'user')) }}</span>
+      </span>
 
-        {{-- User + Admin: My Requests --}}
-        <a href="{{ route('requisitions.my.index') }}" class="btn btn-outline-light btn-sm">My Requests</a>
+      {{-- ADMIN-ONLY: Low Stock button with real-time badge --}}
+      @if ($isAdmin)
+        @php
+            $lowStockCount = app(\App\Services\LowStockService::class)->count();
+        @endphp
+        <a href="{{ route('products.index', ['view' => 'active']) }}"
+           class="btn btn-outline-light btn-sm position-relative">
+          Low Stock
+          <span data-role="low-stock-count"
+                class="badge bg-danger position-absolute top-0 start-100 translate-middle {{ $lowStockCount ? '' : 'd-none' }}">
+            {{ $lowStockCount ?: 0 }}
+          </span>
+        </a>
+      @endif
 
-        {{-- Admin-only links --}}
-        @if ($isAdmin)
-          <a href="{{ route('requisitions.admin.index') }}" class="btn btn-outline-light btn-sm">Requisitions</a>
-          <a href="{{ route('users.index') }}" class="btn btn-outline-light btn-sm">Users</a>
-          <a href="{{ route('logs.index') }}" class="btn btn-outline-light btn-sm">Logs</a>
-          <a href="{{ route('settings.index') }}" class="btn btn-outline-light btn-sm">Settings</a>
-        @endif
+      {{-- User + Admin: My Requests --}}
+      <a href="{{ route('requisitions.my.index') }}" class="btn btn-outline-light btn-sm">My Requests</a>
 
-        <a href="{{ route('account.form') }}" class="btn btn-outline-light btn-sm">Account</a>
-        <a href="{{ route('logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
+      {{-- Admin-only links --}}
+      @if ($isAdmin)
+        <a href="{{ route('requisitions.admin.index') }}" class="btn btn-outline-light btn-sm">Requisitions</a>
+        <a href="{{ route('users.index') }}" class="btn btn-outline-light btn-sm">Users</a>
+        <a href="{{ route('logs.index') }}" class="btn btn-outline-light btn-sm">Logs</a>
+        <a href="{{ route('settings.index') }}" class="btn btn-outline-light btn-sm">Settings</a>
+      @endif
+
+      <a href="{{ route('account.form') }}" class="btn btn-outline-light btn-sm">Account</a>
+      <a href="{{ route('app.logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
     </div>
   </div>
 </nav>
@@ -171,69 +186,100 @@
 <!-- TABLE TOOLBAR -->
 <div class="table-toolbar mb-3">
   <div class="row g-2 align-items-center">
-    <div class="col-md-5 d-flex align-items-center gap-2 flex-wrap">
+
+    {{-- Left: Primary actions --}}
+    <div class="col-lg-6 d-flex flex-wrap align-items-center gap-2">
+
       @if ($isAdmin)
-        <form method="POST" action="{{ route('products.reset') }}" class="js-ajax-form"
+        <form method="POST"
+              action="{{ route('products.reset') }}"
+              class="js-ajax-form"
               onsubmit="return confirm('This will delete all products. Continue?');">
           @csrf
-          <button class="btn btn-outline-danger btn-sm">Reset All</button>
+          <button class="btn btn-outline-danger btn-sm">
+            Reset All
+          </button>
         </form>
       @endif
 
       @if ($is_archived_view)
-        <a href="{{ $toggleViewUrl }}" class="btn btn-outline-secondary btn-sm">View Active</a>
+        <a href="{{ $toggleViewUrl }}" class="btn btn-outline-secondary btn-sm">
+          View Active
+        </a>
       @else
-        <a href="{{ $toggleViewUrl }}" class="btn btn-outline-secondary btn-sm">View Archived</a>
+        <a href="{{ $toggleViewUrl }}" class="btn btn-outline-secondary btn-sm">
+          View Archived
+        </a>
       @endif
+
+      <button id="resetViewBtn"
+              class="btn btn-outline-secondary btn-sm"
+              type="button">
+        Reset View
+      </button>
     </div>
 
-    <div class="col-md-7 d-flex justify-content-end align-items-center gap-2 flex-wrap">
-      <button id="resetViewBtn" class="btn btn-outline-secondary btn-sm" type="button">Reset View</button>
+    {{-- Right: Secondary actions (Export / Columns) --}}
+    <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end align-items-center gap-2 mt-2 mt-lg-0">
 
-      <a href="{{ $productsExportUrl }}" class="btn btn-outline-secondary btn-sm" title="Export filtered products">
+      <a href="{{ $productsExportUrl }}"
+         class="btn btn-outline-secondary btn-sm"
+         title="Export filtered products">
         Export CSV
       </a>
 
       <div class="dropdown">
-        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" type="button">
+        <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                data-bs-toggle="dropdown"
+                type="button">
           Columns
         </button>
-        <div class="dropdown-menu dropdown-menu-end p-2 columns-menu bg-white text-dark border" style="min-width: 240px;">
+        <div class="dropdown-menu dropdown-menu-end p-2 columns-menu bg-white text-dark border"
+             style="min-width: 240px;">
           <label class="form-check d-flex align-items-center text-dark">
-            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="id"> <span class="form-check-label">ID</span>
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="id">
+            <span class="form-check-label">ID</span>
           </label>
           <label class="form-check d-flex align-items-center text-dark">
-            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="sku"> <span class="form-check-label">SKU</span>
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="sku">
+            <span class="form-check-label">SKU</span>
           </label>
           <label class="form-check d-flex align-items-center text-dark">
-            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="barcode"> <span class="form-check-label">Barcode</span>
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="barcode">
+            <span class="form-check-label">Barcode</span>
           </label>
           <label class="form-check d-flex align-items-center text-dark">
-            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="name"> <span class="form-check-label">Name</span>
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="name">
+            <span class="form-check-label">Name</span>
           </label>
           <label class="form-check d-flex align-items-center text-dark">
-            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="category"> <span class="form-check-label">Category</span>
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="category">
+            <span class="form-check-label">Category</span>
           </label>
           <label class="form-check d-flex align-items-center text-dark">
-            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="qty"> <span class="form-check-label">Qty</span>
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="qty">
+            <span class="form-check-label">Qty</span>
           </label>
           <label class="form-check d-flex align-items-center text-dark">
-            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="price"> <span class="form-check-label">Price</span>
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="price">
+            <span class="form-check-label">Price</span>
           </label>
           <label class="form-check d-flex align-items-center text-dark">
-            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="total"> <span class="form-check-label">Total</span>
+            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="total">
+            <span class="form-check-label">Total</span>
           </label>
           @if ($isAdmin)
-          <label class="form-check d-flex align-items-center text-dark">
-            <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="action"> <span class="form-check-label">Action</span>
-          </label>
+            <label class="form-check d-flex align-items-center text-dark">
+              <input class="form-check-input me-2" type="checkbox" checked data-toggle-col="action">
+              <span class="form-check-label">Action</span>
+            </label>
           @endif
           <div class="mt-2 text-muted small">Tip: Click table headers to sort.</div>
         </div>
       </div>
     </div>
 
-    <!-- Quick search -->
+    {{-- Quick search --}}
     <div class="col-12 mt-3">
       <div class="input-group input-group-sm">
         <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -243,6 +289,7 @@
         </button>
       </div>
     </div>
+
   </div>
 </div>
 
